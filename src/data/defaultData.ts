@@ -56,6 +56,8 @@ export const defaultSettings: AppSettings = {
     botToken: '',
     botUsername: 'Fun_Date_bot',
   },
+  adminPassword: 'admin',
+  adminRecoveryEmail: 'rasoolramazani@gmail.com',
 };
 
 export const defaultDemoInvites: InviteSession[] = [

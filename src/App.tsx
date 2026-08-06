@@ -4,6 +4,7 @@ import { TelegramBotSimulator } from './components/TelegramBotSimulator';
 import { FunInviteeFlow } from './components/FunInviteeFlow';
 import { FormalInviteeFlow } from './components/FormalInviteeFlow';
 import { AdminPanel } from './components/AdminPanel';
+import { AdminLogin } from './components/AdminLogin';
 import { defaultSettings, defaultDemoInvites } from './data/defaultData';
 import { AppSettings, InviteSession, StatsOverview } from './types';
 import { soundFx } from './components/SoundManager';
@@ -11,9 +12,16 @@ import { Heart, Sparkles, RefreshCw, ExternalLink } from 'lucide-react';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<'admin' | 'users' | 'broadcast'>('admin');
-  const [adminSubTab, setAdminSubTab] = useState<'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot'>('stats');
+  const [adminSubTab, setAdminSubTab] = useState<'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot' | 'security'>('stats');
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
   const [isStandaloneGuestMode, setIsStandaloneGuestMode] = useState<boolean>(false);
+
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('admin_authenticated') === 'true';
+    }
+    return false;
+  });
 
   const [settings, setSettings] = useState<AppSettings>(defaultSettings);
   const [invites, setInvites] = useState<InviteSession[]>(defaultDemoInvites);
@@ -208,6 +216,22 @@ export default function App() {
     setTimeout(() => setNotification(null), 4000);
   };
 
+  const handleAdminLoginSuccess = () => {
+    setIsAdminAuthenticated(true);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('admin_authenticated', 'true');
+    }
+    showToast('ورود موفقیت‌آمیز به پنل مدیریت! ✨');
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminAuthenticated(false);
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('admin_authenticated');
+    }
+    showToast('از حساب مدیریت خارج شدید.');
+  };
+
   // STANDALONE GUEST VIEW (When opened via Telegram Invite Link)
   if (isStandaloneGuestMode && activeInvite) {
     return (
@@ -255,37 +279,50 @@ export default function App() {
         </div>
       )}
 
-      {/* Header Navbar */}
-      <Navbar
-        currentTab={currentTab}
-        setCurrentTab={(tab) => {
-          setCurrentTab(tab);
-          if (tab === 'users') setAdminSubTab('users');
-          if (tab === 'broadcast') setAdminSubTab('broadcast');
-          if (tab === 'admin') setAdminSubTab('stats');
-        }}
-        soundEnabled={soundEnabled}
-        setSoundEnabled={setSoundEnabled}
-      />
+      {/* Header Navbar - Only shown when logged in */}
+      {isAdminAuthenticated && (
+        <Navbar
+          currentTab={currentTab}
+          setCurrentTab={(tab) => {
+            setCurrentTab(tab);
+            if (tab === 'users') setAdminSubTab('users');
+            if (tab === 'broadcast') setAdminSubTab('broadcast');
+            if (tab === 'admin') setAdminSubTab('stats');
+          }}
+          soundEnabled={soundEnabled}
+          setSoundEnabled={setSoundEnabled}
+          onLogout={handleAdminLogout}
+        />
+      )}
 
       {/* Main Content Area */}
       <main className="flex-1 pb-16">
-        <AdminPanel
-          invites={invites}
-          stats={stats}
-          settings={settings}
-          activeSubTab={adminSubTab}
-          setActiveSubTab={(st) => {
-            setAdminSubTab(st);
-            if (st === 'users') setCurrentTab('users');
-            else if (st === 'broadcast') setCurrentTab('broadcast');
-            else setCurrentTab('admin');
-          }}
-          onUpdateSettings={handleUpdateSettings}
-          onResetSettings={handleResetSettings}
-          onDeleteInvite={handleDeleteInvite}
-          openInvitePage={handleOpenInvitePage}
-        />
+        {!isAdminAuthenticated ? (
+          <AdminLogin
+            correctPassword={settings.adminPassword || 'admin'}
+            recoveryEmail={settings.adminRecoveryEmail || 'rasoolramazani@gmail.com'}
+            onLoginSuccess={handleAdminLoginSuccess}
+          />
+        ) : (
+          <AdminPanel
+            invites={invites}
+            stats={stats}
+            settings={settings}
+            activeSubTab={adminSubTab}
+            setActiveSubTab={(st) => {
+              setAdminSubTab(st);
+              if (st === 'users') setCurrentTab('users');
+              else if (st === 'broadcast') setCurrentTab('broadcast');
+              else if (st === 'security') setCurrentTab('admin');
+              else setCurrentTab('admin');
+            }}
+            onUpdateSettings={handleUpdateSettings}
+            onResetSettings={handleResetSettings}
+            onDeleteInvite={handleDeleteInvite}
+            openInvitePage={handleOpenInvitePage}
+            onLogout={handleAdminLogout}
+          />
+        )}
       </main>
 
       {/* Subtle Footer */}

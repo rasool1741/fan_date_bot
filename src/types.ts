@@ -81,6 +81,8 @@ export interface AppSettings {
   funQuestions: FunQuestionConfig;
   formalQuestions: FormalQuestionConfig;
   botConfig: BotConfig;
+  adminPassword?: string;
+  adminRecoveryEmail?: string;
 }
 
 export interface StatsOverview {

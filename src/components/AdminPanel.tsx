@@ -24,6 +24,11 @@ import {
   GitBranch,
   User,
   CornerDownLeft,
+  Lock,
+  KeyRound,
+  Mail,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 import { InviteSession, AppSettings, StatsOverview, TelegramBotUser } from '../types';
 import { soundFx } from './SoundManager';
@@ -33,12 +38,13 @@ interface AdminPanelProps {
   invites: InviteSession[];
   stats: StatsOverview;
   settings: AppSettings;
-  activeSubTab: 'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot';
-  setActiveSubTab: (tab: 'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot') => void;
+  activeSubTab: 'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot' | 'security';
+  setActiveSubTab: (tab: 'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot' | 'security') => void;
   onUpdateSettings: (newSettings: AppSettings) => Promise<void>;
   onResetSettings: () => Promise<void>;
   onDeleteInvite: (id: string) => Promise<void>;
   openInvitePage: (inviteId: string) => void;
+  onLogout?: () => void;
 }
 
 export const AdminPanel: React.FC<AdminPanelProps> = ({
@@ -51,6 +57,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   onResetSettings,
   onDeleteInvite,
   openInvitePage,
+  onLogout,
 }) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
@@ -79,6 +86,8 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
   const [testingToken, setTestingToken] = useState<boolean>(false);
+  const [showAdminPass, setShowAdminPass] = useState<boolean>(false);
+  const [copiedEmailSetting, setCopiedEmailSetting] = useState<boolean>(false);
   const [tokenStatus, setTokenStatus] = useState<{ ok: boolean; message: string; botInfo?: any } | null>(null);
 
   const isFormDirty = React.useRef(false);
@@ -509,6 +518,28 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             <Send className="w-4 h-4" />
             <span>تنظیمات بات</span>
           </button>
+
+          <button
+            onClick={() => setActiveSubTab('security')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
+              activeSubTab === 'security'
+                ? 'bg-purple-600 text-white shadow-md'
+                : 'text-slate-400 hover:text-white'
+            }`}
+          >
+            <Lock className="w-4 h-4" />
+            <span>رمز و امنیت 🔒</span>
+          </button>
+
+          {onLogout && (
+            <button
+              onClick={onLogout}
+              className="px-3 py-2 rounded-xl text-xs font-bold transition-all text-rose-400 hover:bg-rose-950/60 hover:text-rose-300 border border-rose-500/30 shrink-0"
+              title="خروج از حساب مدیریت"
+            >
+              خروج 🚪
+            </button>
+          )}
         </div>
       </div>
 
@@ -1531,6 +1562,112 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             {saveSuccess && (
               <span className="text-xs text-emerald-400 font-bold animate-pulse">
                 تنظیمات بات با موفقیت ثبت شد! ✅
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* SUB-TAB 7: SECURITY & PASSWORD SETTINGS */}
+      {activeSubTab === 'security' && (
+        <div className="bg-slate-900/90 border border-slate-800 rounded-3xl p-6 shadow-xl space-y-6 animate-fade-in">
+          <div className="border-b border-slate-800 pb-4">
+            <h3 className="text-base font-bold text-white flex items-center gap-2">
+              <Lock className="w-5 h-5 text-purple-400" />
+              <span>تنظیمات امنیت و رمز عبور ورود به پنل مدیریت</span>
+            </h3>
+            <p className="text-xs text-slate-400 mt-1">
+              تعیین رمز عبور جهت محدودسازی دسترسی عمومی به پنل مدیریت و مشاهده اطلاعات ایمیل بازیابی.
+            </p>
+          </div>
+
+          <div className="space-y-5">
+            {/* Password edit */}
+            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3">
+              <label className="text-xs text-slate-300 font-bold block flex items-center gap-2">
+                <KeyRound className="w-4 h-4 text-purple-400" />
+                <span>رمز عبور مدیر سیستم:</span>
+              </label>
+              <div className="relative">
+                <input
+                  type={showAdminPass ? 'text' : 'password'}
+                  value={formSettings.adminPassword || ''}
+                  onChange={(e) => {
+                    isFormDirty.current = true;
+                    setFormSettings({
+                      ...formSettings,
+                      adminPassword: e.target.value,
+                    });
+                  }}
+                  placeholder="رمز عبور مدیر را وارد کنید (مثلاً: admin123)..."
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl pr-3 pl-10 py-2.5 text-white text-xs font-mono focus:outline-none focus:border-purple-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowAdminPass(!showAdminPass)}
+                  className="absolute left-3 top-2.5 text-slate-400 hover:text-white transition-colors"
+                  title={showAdminPass ? 'مخفی کردن' : 'نمایش'}
+                >
+                  {showAdminPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-500">
+                این رمز عبور برای ورود به بخش مدیریت برنامه استفاده می‌شود.
+              </p>
+            </div>
+
+            {/* Recovery Email view/edit */}
+            <div className="bg-slate-950 p-4 rounded-2xl border border-purple-500/30 space-y-3">
+              <label className="text-xs text-slate-300 font-bold block flex items-center gap-2">
+                <Mail className="w-4 h-4 text-purple-400" />
+                <span>ایمیل پشتیبانی و بازیابی رمز عبور (در سورس برنامه):</span>
+              </label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="email"
+                  value={formSettings.adminRecoveryEmail || 'rasoolramazani@gmail.com'}
+                  onChange={(e) => {
+                    isFormDirty.current = true;
+                    setFormSettings({
+                      ...formSettings,
+                      adminRecoveryEmail: e.target.value,
+                    });
+                  }}
+                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-purple-300 text-xs font-mono font-bold focus:outline-none focus:border-purple-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundFx.playPop();
+                    navigator.clipboard.writeText(formSettings.adminRecoveryEmail || 'rasoolramazani@gmail.com');
+                    setCopiedEmailSetting(true);
+                    setTimeout(() => setCopiedEmailSetting(false), 2000);
+                  }}
+                  className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold shrink-0 transition-colors flex items-center gap-1"
+                >
+                  {copiedEmailSetting ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                  <span>{copiedEmailSetting ? 'کپی شد' : 'کپی'}</span>
+                </button>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                در صورت فراموشی رمز عبور توسط مدیر، در صفحه ورود پیغام پشتیبانی جهت تماس با ایمیل فوق (<code className="text-purple-300 font-mono">rasoolramazani@gmail.com</code>) به کاربر نمایش داده می‌شود.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-2">
+            <button
+              onClick={handleSaveSettings}
+              disabled={isSaving}
+              className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-lg shadow-purple-500/20 transition-all flex items-center gap-2 active:scale-95"
+            >
+              <Check className="w-4 h-4" />
+              <span>{isSaving ? 'در حال ذخیره‌سازی...' : 'ذخیره رمز عبور و تنظیمات امنیت'}</span>
+            </button>
+
+            {saveSuccess && (
+              <span className="text-xs text-emerald-400 font-bold animate-pulse">
+                تنظیمات امنیت با موفقیت ثبت شد! ✅
               </span>
             )}
           </div>
