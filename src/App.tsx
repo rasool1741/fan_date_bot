@@ -14,7 +14,13 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<'admin' | 'users' | 'broadcast'>('admin');
   const [adminSubTab, setAdminSubTab] = useState<'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot' | 'security'>('stats');
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
-  const [isStandaloneGuestMode, setIsStandaloneGuestMode] = useState<boolean>(false);
+  const [isStandaloneGuestMode, setIsStandaloneGuestMode] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.has('invite');
+    }
+    return false;
+  });
 
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
@@ -36,9 +42,20 @@ export default function App() {
     acceptanceRate: 100,
   });
 
-  const [activeInviteId, setActiveInviteId] = useState<string | null>(null);
+  const [activeInviteId, setActiveInviteId] = useState<string | null>(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('invite');
+    }
+    return null;
+  });
   const [activeInvite, setActiveInvite] = useState<InviteSession | null>(null);
-  const [loadingInvite, setLoadingInvite] = useState<boolean>(false);
+  const [loadingInvite, setLoadingInvite] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return new URLSearchParams(window.location.search).has('invite');
+    }
+    return false;
+  });
   const [notification, setNotification] = useState<string | null>(null);
 
   // Fetch initial backend data & parse URL invite params
@@ -233,7 +250,7 @@ export default function App() {
   };
 
   // STANDALONE GUEST VIEW (When opened via Telegram Invite Link)
-  if (isStandaloneGuestMode && activeInvite) {
+  if (isStandaloneGuestMode) {
     return (
       <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-rose-500 selection:text-white flex flex-col justify-center items-center p-4 dir-rtl" dir="rtl">
         {/* Toast Notification Banner */}
@@ -251,18 +268,26 @@ export default function App() {
               <RefreshCw className="w-5 h-5 animate-spin text-rose-400" />
               <span>در حال بارگذاری دعوتنامه...</span>
             </div>
-          ) : activeInvite.type === 'fun' ? (
-            <FunInviteeFlow
-              invite={activeInvite}
-              settings={settings}
-              onRespond={handleRespondToInvite}
-            />
+          ) : activeInvite ? (
+            activeInvite.type === 'fun' ? (
+              <FunInviteeFlow
+                invite={activeInvite}
+                settings={settings}
+                onRespond={handleRespondToInvite}
+              />
+            ) : (
+              <FormalInviteeFlow
+                invite={activeInvite}
+                settings={settings}
+                onRespond={handleRespondToInvite}
+              />
+            )
           ) : (
-            <FormalInviteeFlow
-              invite={activeInvite}
-              settings={settings}
-              onRespond={handleRespondToInvite}
-            />
+            <div className="text-center py-16 bg-slate-900/80 border border-slate-800 rounded-3xl p-8 space-y-4">
+              <div className="text-4xl">💔</div>
+              <h2 className="text-lg font-bold text-white">دعوتنامه مورد نظر یافت نشد</h2>
+              <p className="text-xs text-slate-400">ممکن است این لینک منقضی شده باشد یا شناسه آن اشتباه وارد شده باشد.</p>
+            </div>
           )}
         </div>
       </div>
