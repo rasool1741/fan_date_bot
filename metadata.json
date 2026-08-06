@@ -1,0 +1,6 @@
+{
+  "name": "قرارِ فان | دعوت به دیت بازی‌گونه",
+  "description": "اپلیکیشن تعاملی و بازی‌گونه دعوت به دیت با دکمه‌های فراری، سوالات طنز و رسمی، آمار کامل و شبیه‌ساز بات تلگرام.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,279 @@
+{
+  "appSettings": {
+    "funQuestions": {
+      "step1Question": "آیا دعوت منو برای دیت قبول می‌کنی؟ 🌹✨",
+      "step2Question": "دوس داری به صرف چی دعوت بشی؟ ☕️🍰",
+      "step2Options": [
+        {
+          "text": "شام لاکچری پنت‌هاوس برج میلاد 🏙",
+          "enabled": false
+        },
+        {
+          "text": "سفر آخر هفته به پاریس ✈️🗼",
+          "enabled": false
+        },
+        {
+          "text": "یک پیتزای ۲ متری با نوشابه 🍕",
+          "enabled": false
+        },
+        {
+          "text": "پیاده‌روی دو نفره و گپ زدن 🚶‍♂️🚶‍♀️✨",
+          "enabled": true
+        }
+      ],
+      "step3Question": "برای هدیه دیت چی دوس داری؟ 🎁❤️",
+      "step3Options": [
+        {
+          "text": "یک آیفون ۱۶ پرومکس بنفش 📱",
+          "enabled": false
+        },
+        {
+          "text": "یک ماشین شاسی‌بلند قرمز 🚗",
+          "enabled": false
+        },
+        {
+          "text": "سند یک ویلا تو شمال 🏡",
+          "enabled": false
+        },
+        {
+          "text": "عزیزم تو خودت هدیه‌ای 🎁❤️",
+          "enabled": true
+        }
+      ],
+      "step4Question": "بگو سوال کن خبر خوشحالی را بدم؟ 🎉😍"
+    },
+    "formalQuestions": {
+      "poetry": "در تمنای تو امشب تا سحر بیدارم\nای خوش آن دم که ز وصل تو پیامی دارم...\nبی قرارم که در این خلوت سرشار از مهر\nافتخار هم‌کلامی با تو را بردارم ✨🌹",
+      "introText": "با کمال احترام و افتخار، از شما دعوت می‌شود تا در یک نشست دوستانه و صمیمی، افتخار همراهی بدهید.",
+      "questions": [
+        {
+          "id": "atmospherePreference",
+          "title": "فضای پیشنهادی مورد علاقه شما جهت گفتگو:",
+          "options": [
+            "کافه آرام و باوقار ☕️",
+            "رستوران سنتی و شیک 🍽",
+            "فضای باز و طبیعت زیبا 🌿",
+            "انتخاب با شماست ✨"
+          ]
+        },
+        {
+          "id": "timePreference",
+          "title": "بهترین زمان پیشنهادی شما برای این قرار:",
+          "options": [
+            "عصر روزهای آخر هفته 🌅",
+            "شب‌های وسط هفته 🌙",
+            "آخر هفته تایم ناهار ☀️",
+            "هماهنگی تلفنی 📞"
+          ]
+        }
+      ]
+    },
+    "botConfig": {
+      "welcomeMessage": "سلام رفیق! 👋 به ربات هوشمند دعوت به دیت خوش اومدی. با این ربات میتونی خیلی جذاب و بازی‌گونه دوستت یا مخاطب خاصت رو به یک قرار عالی دعوت کنی! اول سبک دعوتت رو انتخاب کن:",
+      "funButtonText": "🥳 دعوت فان و بازی‌گونه",
+      "formalButtonText": "👔 دعوت رسمی و شیک",
+      "funInviteTemplate": "سلام عزیز دلم! 🔥 \nیه دعوتنامه اختصاصی و بامزه برات فرستادم. \nفقط یه شرط داره: باید به سوالاتش صادقانه جواب بدی! 😉\n\nبرای باز کردن دعوتنامه روی لینک زیر بزن 👇\n{LINK}",
+      "formalInviteTemplate": "با سلام و احترام 🌸\nدعوتنامه‌ای محترمانه جهت تجدید دیدار و هم‌کلامی برای شما ارسال گردیده است.\n\nمشاهده متن کامل دعوتنامه و پاسخ: 👇\n{LINK}",
+      "botToken": "8838020838:AAERtQhzhu1HCzdEN-y6DjA0r8srQLb8zjA",
+      "botUsername": "Fun_Date_bot"
+    }
+  },
+  "invitesStore": [
+    {
+      "id": "date-07qh5eb",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "مریم جان",
+      "inviterChatId": 86502422,
+      "type": "formal",
+      "status": "pending",
+      "createdAt": "2026-08-05T22:31:12.622Z",
+      "updatedAt": "2026-08-05T22:31:12.622Z",
+      "viewsCount": 0
+    },
+    {
+      "id": "date-fbu4b0z",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "",
+      "inviterChatId": 86502422,
+      "type": "formal",
+      "status": "pending",
+      "createdAt": "2026-08-05T22:27:18.346Z",
+      "updatedAt": "2026-08-05T22:27:18.346Z",
+      "viewsCount": 0
+    },
+    {
+      "id": "date-5bcp33h",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "",
+      "inviterChatId": 86502422,
+      "type": "formal",
+      "status": "pending",
+      "createdAt": "2026-08-05T22:22:23.948Z",
+      "updatedAt": "2026-08-05T22:22:23.948Z",
+      "viewsCount": 0
+    },
+    {
+      "id": "date-0tojvfm",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "",
+      "inviterChatId": 86502422,
+      "type": "formal",
+      "status": "pending",
+      "createdAt": "2026-08-05T22:18:30.839Z",
+      "updatedAt": "2026-08-05T22:21:41.196Z",
+      "viewsCount": 2
+    },
+    {
+      "id": "date-35pa1te",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "",
+      "inviterChatId": 86502422,
+      "type": "fun",
+      "status": "pending",
+      "createdAt": "2026-08-05T22:13:51.179Z",
+      "updatedAt": "2026-08-05T22:13:51.179Z",
+      "viewsCount": 0
+    },
+    {
+      "id": "date-2omu866",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "مریم جان",
+      "inviterChatId": 86502422,
+      "type": "fun",
+      "status": "accepted",
+      "createdAt": "2026-08-05T22:06:07.089Z",
+      "updatedAt": "2026-08-05T22:07:06.264Z",
+      "viewsCount": 2,
+      "funResponses": {
+        "dateChoice": "پیاده‌روی دو نفره و گپ زدن 🚶‍♂️🚶‍♀️✨",
+        "giftChoice": "عزیزم تو خودت هدیه‌ای 🎁❤️",
+        "shareNews": "yes"
+      }
+    },
+    {
+      "id": "date-tz20w0q",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "جاسم",
+      "inviterChatId": 86502422,
+      "type": "formal",
+      "status": "pending",
+      "createdAt": "2026-08-05T22:03:19.390Z",
+      "updatedAt": "2026-08-05T22:03:25.969Z",
+      "viewsCount": 2
+    },
+    {
+      "id": "date-3fhbecy",
+      "inviterName": "Rasool Ramazani",
+      "inviteeName": "",
+      "inviterChatId": 86502422,
+      "type": "formal",
+      "status": "accepted",
+      "createdAt": "2026-08-05T22:02:02.626Z",
+      "updatedAt": "2026-08-05T22:02:29.070Z",
+      "viewsCount": 2,
+      "formalResponses": {
+        "timePreference": "عصر روزهای آخر هفته 🌅",
+        "atmospherePreference": "فضای باز و طبیعت زیبا 🌿",
+        "customNote": "04894049804984",
+        "accepted": true
+      }
+    },
+    {
+      "id": "date-ewmjeci",
+      "inviterName": "کاربر عاشق",
+      "inviteeName": "",
+      "type": "fun",
+      "status": "pending",
+      "createdAt": "2026-08-05T21:45:55.361Z",
+      "updatedAt": "2026-08-05T21:45:55.361Z",
+      "viewsCount": 0
+    },
+    {
+      "id": "date-vhfk7m0",
+      "inviterName": "Rasool",
+      "inviterChatId": 86502422,
+      "inviteeName": "",
+      "type": "formal",
+      "status": "pending",
+      "createdAt": "2026-08-05T21:44:59.436Z",
+      "updatedAt": "2026-08-05T21:45:07.685Z",
+      "viewsCount": 2
+    },
+    {
+      "id": "date-57kd3oq",
+      "inviterName": "Rasool",
+      "inviterChatId": 86502422,
+      "inviteeName": "",
+      "type": "fun",
+      "status": "declined",
+      "createdAt": "2026-08-05T21:35:07.264Z",
+      "updatedAt": "2026-08-05T21:44:18.055Z",
+      "viewsCount": 4,
+      "funResponses": {
+        "dateChoice": "پیاده‌روی دو نفره و گپ زدن 🚶‍♂️🚶‍♀️✨",
+        "giftChoice": "عزیزم تو خودت هدیه‌ای 🎁❤️",
+        "shareNews": "no"
+      }
+    },
+    {
+      "id": "date-l7wiy0d",
+      "inviterName": "کاربر عاشق",
+      "inviteeName": "",
+      "type": "fun",
+      "status": "pending",
+      "createdAt": "2026-08-05T21:33:34.743Z",
+      "updatedAt": "2026-08-05T21:33:34.743Z",
+      "viewsCount": 0
+    },
+    {
+      "id": "demo-fun-1",
+      "inviterName": "امیر",
+      "inviteeName": "سارا",
+      "type": "fun",
+      "status": "accepted",
+      "funResponses": {
+        "dateChoice": "پیاده‌روی دو نفره و گپ زدن 🚶‍♂️🚶‍♀️✨",
+        "giftChoice": "عزیزم تو خودت هدیه‌ای 🎁❤️",
+        "shareNews": "yes"
+      },
+      "createdAt": "2026-08-05T16:32:42.246Z",
+      "updatedAt": "2026-08-05T17:32:42.246Z",
+      "viewsCount": 3
+    },
+    {
+      "id": "demo-formal-1",
+      "inviterName": "علی",
+      "inviteeName": "مریم خانوم",
+      "type": "formal",
+      "status": "accepted",
+      "formalResponses": {
+        "atmospherePreference": "کافه آرام و باوقار ☕️",
+        "timePreference": "عصر روزهای آخر هفته 🌅",
+        "accepted": true
+      },
+      "createdAt": "2026-08-04T21:32:42.246Z",
+      "updatedAt": "2026-08-04T23:32:42.246Z",
+      "viewsCount": 2
+    },
+    {
+      "id": "demo-fun-2",
+      "inviterName": "محمد",
+      "inviteeName": "نازنین",
+      "type": "fun",
+      "status": "pending",
+      "createdAt": "2026-08-05T19:32:42.246Z",
+      "updatedAt": "2026-08-05T19:32:42.246Z",
+      "viewsCount": 1
+    }
+  ],
+  "botUsersStore": [
+    {
+      "chatId": 86502422,
+      "firstName": "Rasool",
+      "lastName": "Ramazani",
+      "username": "rasoolramazani",
+      "firstSeen": "2026-08-05T22:01:43.803Z",
+      "lastSeen": "2026-08-05T22:31:12.622Z"
+    }
+  ]
+}

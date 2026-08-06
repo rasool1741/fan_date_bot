@@ -1,0 +1,44 @@
+@import "tailwindcss";
+@import url('https://cdn.jsdelivr.net/gh/amir-h/byekan-font/byekan.css');
+@import url('https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css');
+
+@font-face {
+  font-family: 'B Yekan';
+  src: url('https://cdn.jsdelivr.net/gh/amir-h/byekan-font/BYekan.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer utilities {
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-6px); }
+    40%, 80% { transform: translateX(6px); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-shake {
+    animation: shake 0.4s ease-in-out;
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+}
+
+* {
+  font-family: 'B Yekan', 'BYekan', 'Yekan', 'Vazirmatn', -apple-system, sans-serif !important;
+}
+
+body {
+  font-family: 'B Yekan', 'BYekan', 'Yekan', 'Vazirmatn', -apple-system, sans-serif !important;
+  background-color: #020617;
+  color: #f8fafc;
+  overflow-x: hidden;
+}
+
