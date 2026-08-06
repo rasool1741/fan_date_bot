@@ -34,16 +34,16 @@ export const FunInviteeFlow: React.FC<FunInviteeFlowProps> = ({ invite, settings
     'ای بابا! دستت بهم نمیرسه 🏃‍♂️💨',
     'نمیتونی نمیتونی! 😜',
     'فقط بله رو باید بزنی! ❤️',
-    'کجا داری میری آخه؟ 😂',
     'خیر وجود نداره عزیزم! 😍',
-    'تلاش بیفایده نکن! 🚀',
+    'هرچی بزنی فرار می‌کنه! 😂 راهی جز بله نداری!',
   ];
 
   const handleEscapeNoButton = (e?: React.SyntheticEvent) => {
     if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+      if (typeof e.preventDefault === 'function') e.preventDefault();
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
     }
+
     soundFx.playEscape();
     setNoEscapeCount((prev) => prev + 1);
 
@@ -255,6 +255,7 @@ export const FunInviteeFlow: React.FC<FunInviteeFlowProps> = ({ invite, settings
                 onMouseEnter={handleEscapeNoButton}
                 onMouseMove={handleEscapeNoButton}
                 onTouchStart={handleEscapeNoButton}
+                onTouchEnd={handleEscapeNoButton}
                 onTouchMove={handleEscapeNoButton}
                 onPointerDown={handleEscapeNoButton}
                 onClick={handleEscapeNoButton}
@@ -264,15 +265,17 @@ export const FunInviteeFlow: React.FC<FunInviteeFlowProps> = ({ invite, settings
                         position: 'absolute',
                         left: `${noPos.x}px`,
                         top: `${noPos.y}px`,
-                        transition: 'all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                        transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
                         zIndex: 30,
+                        touchAction: 'none',
                       }
                     : {
                         position: 'relative',
                         zIndex: 10,
+                        touchAction: 'none',
                       }
                 }
-                className="px-6 py-3.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-rose-500/50 text-slate-300 hover:text-rose-300 font-bold text-sm shadow-xl cursor-pointer select-none transition-colors"
+                className="px-6 py-3.5 rounded-2xl bg-slate-800 border border-slate-700 hover:border-rose-500/50 text-slate-300 hover:text-rose-300 font-bold text-sm shadow-xl cursor-pointer select-none transition-all active:scale-90"
               >
                 <span>خیر 🙈</span>
               </button>

@@ -95,6 +95,17 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Telegram WebApp SDK initialization
+    if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
+      try {
+        const tg = (window as any).Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+      } catch (e) {
+        // ignore telegram webapp setup errors
+      }
+    }
+
     fetchData();
 
     // Live background polling every 3 seconds for instant syncing with backend & Telegram

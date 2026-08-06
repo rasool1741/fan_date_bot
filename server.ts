@@ -190,7 +190,7 @@ async function handleTelegramUpdate(update: any, token: string) {
 
         const inviteText = `سلام <b>${escapeHtml(inviteeDisplayName)}</b> عزیز! 🌹\n\n` +
           `یک دعوت‌نامه اختصاصی و ویژه از طرف <b>${escapeHtml(inviterDisplayName)}</b> برای شما ارسال شده است! ✨\n\n` +
-          `جهت مشاهده متن کامل دعوت‌نامه و ارسال پاسخ، روی دکمه زیر کلیک کنید:`;
+          `جهت مشاهده متن کامل دعوت‌نامه و ارسال پاسخ، روی یکی از دکمه‌های زیر کلیک کنید:`;
 
         await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
           method: 'POST',
@@ -203,7 +203,13 @@ async function handleTelegramUpdate(update: any, token: string) {
               inline_keyboard: [
                 [
                   {
-                    text: '💌 باز کردن و مشاهده دعوت‌نامه',
+                    text: '💌 باز کردن در مینی‌اپ تلگرام 📱',
+                    web_app: { url: webAppUrl },
+                  },
+                ],
+                [
+                  {
+                    text: '🌐 باز کردن در مرورگر',
                     url: webAppUrl,
                   },
                 ],
@@ -260,16 +266,43 @@ async function handleTelegramUpdate(update: any, token: string) {
             chat_id: chatId,
             text: messageText,
             parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  {
+                    text: '📱 پیش‌نمایش در مینی‌اپ تلگرام',
+                    web_app: { url: `${origin}?invite=${id}` },
+                  },
+                ],
+              ],
+            },
           }),
         });
         return;
       }
 
-      // Standard /start welcome message
-      if (text.startsWith('/start') || text.includes('استارت')) {
+      // Standard /start welcome message or /app command
+      if (text.startsWith('/start') || text.startsWith('/app') || text.includes('استارت')) {
         delete botUserSessions[chatId];
         const welcomeText = `<b>${escapeHtml(firstName)}</b> عزیز، خوش آمدی! 👋\n\n${escapeHtml(appSettings.botConfig.welcomeMessage)}`;
         
+        // Register WebApp Chat Menu Button
+        try {
+          await fetch(`https://api.telegram.org/bot${token}/setChatMenuButton`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              menu_button: {
+                type: 'web_app',
+                text: 'مینی‌اپ قرار 💖',
+                web_app: { url: origin },
+              },
+            }),
+          });
+        } catch (e) {
+          // Ignore menu button setup errors if unsupported
+        }
+
         await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -282,6 +315,12 @@ async function handleTelegramUpdate(update: any, token: string) {
                 [
                   { text: `🥳 ${appSettings.botConfig.funButtonText}`, callback_data: 'create_fun' },
                   { text: `👔 ${appSettings.botConfig.formalButtonText}`, callback_data: 'create_formal' },
+                ],
+                [
+                  {
+                    text: '📱 باز کردن مینی‌اپ قرار (Telegram Mini App)',
+                    web_app: { url: origin },
+                  },
                 ],
               ],
             },
