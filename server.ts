@@ -161,7 +161,7 @@ async function pollTelegramUpdates() {
 
 async function handleTelegramUpdate(update: any, token: string) {
   try {
-    const origin = process.env.APP_URL || 'https://ais-dev-uhil6eimvpbr5ygcma3xpb-423089187329.europe-west3.run.app';
+    const origin = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || 'https://fan-date-bot.onrender.com';
     
     // Message handling
     if (update.message) {
