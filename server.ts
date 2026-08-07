@@ -21,7 +21,12 @@ function loadPersistedData() {
     if (fs.existsSync(DATA_FILE)) {
       const raw = fs.readFileSync(DATA_FILE, 'utf-8');
       const data = JSON.parse(raw);
-      if (data.appSettings) appSettings = data.appSettings;
+      if (data.appSettings) {
+        appSettings = data.appSettings;
+        if (!appSettings.botConfig.appUrl) {
+          appSettings.botConfig.appUrl = 'https://fan-date-bot.onrender.com';
+        }
+      }
       if (data.invitesStore && Array.isArray(data.invitesStore)) invitesStore = data.invitesStore;
       if (data.botUsersStore && Array.isArray(data.botUsersStore)) botUsersStore = data.botUsersStore;
       console.log('✅ Loaded persisted data from data_store.json');

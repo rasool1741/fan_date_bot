@@ -74,11 +74,26 @@
       "formalButtonText": "👔 دعوت رسمی و شیک",
       "funInviteTemplate": "سلام عزیز دلم! 🔥 \nیه دعوتنامه اختصاصی و بامزه برات فرستادم. \nفقط یه شرط داره: باید به سوالاتش صادقانه جواب بدی! 😉\n\nبرای باز کردن دعوتنامه روی لینک زیر بزن 👇\n{LINK}",
       "formalInviteTemplate": "با سلام و احترام 🌸\nدعوتنامه‌ای محترمانه جهت تجدید دیدار و هم‌کلامی برای شما ارسال گردیده است.\n\nمشاهده متن کامل دعوتنامه و پاسخ: 👇\n{LINK}",
-      "botToken": "8838020838:AAERtQhzhu1HCzdEN-y6DjA0r8srQLb8zjA",
-      "botUsername": "Fun_Date_bot"
-    }
+      "botToken": "",
+      "botUsername": "Fun_Date_bot",
+      "appUrl": "https://fan-date-bot.onrender.com"
+    },
+    "adminSecretKey": "mysecretkey123",
+    "adminPassword": "fmdN5783"
   },
   "invitesStore": [
+    {
+      "id": "date-tedc3om",
+      "inviterName": "Ehsan Tam",
+      "inviteeName": "گوگولی",
+      "inviterChatId": 66556644,
+      "type": "fun",
+      "status": "pending",
+      "createdAt": "2026-08-07T19:05:29.016Z",
+      "updatedAt": "2026-08-07T19:05:29.016Z",
+      "viewsCount": 0,
+      "inviteeChatId": 66556644
+    },
     {
       "id": "date-07qh5eb",
       "inviterName": "Rasool Ramazani",
@@ -274,6 +289,22 @@
       "username": "rasoolramazani",
       "firstSeen": "2026-08-05T22:01:43.803Z",
       "lastSeen": "2026-08-05T22:31:12.622Z"
+    },
+    {
+      "chatId": 5933623611,
+      "firstName": "sh",
+      "lastName": "kian",
+      "username": "shahla_kain",
+      "firstSeen": "2026-08-07T19:01:20.962Z",
+      "lastSeen": "2026-08-07T19:04:29.017Z"
+    },
+    {
+      "chatId": 66556644,
+      "firstName": "Ehsan",
+      "lastName": "Tam",
+      "username": "Ehsan_9205",
+      "firstSeen": "2026-08-07T19:05:05.001Z",
+      "lastSeen": "2026-08-07T19:05:37.020Z"
     }
   ]
 }
