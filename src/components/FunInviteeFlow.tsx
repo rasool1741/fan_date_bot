@@ -187,37 +187,26 @@ export const FunInviteeFlow: React.FC<FunInviteeFlowProps> = ({ invite, settings
       )}
 
       {/* Main Card Header */}
-      <div className="bg-slate-950/90 border-2 border-purple-500/40 rounded-3xl p-6 md:p-8 shadow-2xl shadow-purple-950/80 backdrop-blur-2xl relative overflow-hidden">
+      <div className="bg-slate-900 border border-purple-500/30 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
         {/* Shimmering Top Accent */}
-        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 via-pink-500 via-amber-400 to-cyan-400 animate-pulse" />
-
-        {/* Decorative background blur glows */}
-        <div className="absolute -top-20 -left-20 w-56 h-56 bg-purple-600/25 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -right-20 w-56 h-56 bg-pink-500/25 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Floating Fantasy Emojis */}
-        <div className="absolute top-4 right-4 text-xl opacity-80 pointer-events-none animate-bounce">✨</div>
-        <div className="absolute bottom-4 left-4 text-xl opacity-80 pointer-events-none animate-pulse">🦄</div>
+        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-purple-500 via-pink-500 to-amber-400" />
 
         {/* Inviter Info Header */}
-        <div className="flex items-center justify-between border-b border-purple-900/40 pb-4 mb-6 relative z-10">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6 relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-0.5 shadow-lg shadow-purple-500/20">
-              <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center text-pink-400">
-                <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
-              </div>
+            <div className="w-10 h-10 rounded-full bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
+              <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
             </div>
             <div>
-              <p className="text-xs text-purple-300/80 font-medium">دعوتنامه جادویی از طرف:</p>
-              <h3 className="font-extrabold text-white text-base">
+              <p className="text-xs text-purple-300 font-medium">دعوتنامه صمیمی و فانتزی از طرف:</p>
+              <h3 className="font-bold text-white text-base">
                 {invite.inviterName} {invite.inviteeName ? `برای ${invite.inviteeName}` : ''}
               </h3>
             </div>
           </div>
-          <span className="text-xs bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-amber-500/20 text-purple-200 border border-purple-400/40 px-3.5 py-1.5 rounded-full font-bold flex items-center gap-1.5 shadow-md shadow-purple-500/10">
-            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" />
-            دیت فانتزی 🦄✨
+          <span className="text-xs bg-purple-500/15 text-purple-300 border border-purple-500/30 px-3 py-1.5 rounded-full font-semibold flex items-center gap-1.5 shrink-0">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300" />
+            دیت فانتزی 🦄
           </span>
         </div>
 

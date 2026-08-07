@@ -535,7 +535,7 @@ app.post('/api/invites', async (req, res) => {
         `👤 <b>فرستنده:</b> ${escapeHtml(newInvite.inviterName)}\n` +
         `🎯 <b>مخاطب:</b> ${escapeHtml(newInvite.inviteeName || 'بدون نام')}\n` +
         `🎈 <b>نوع:</b> ${newInvite.type === 'formal' ? 'رسمی 👔' : 'صمیمانه 🥳'}\n\n` +
-        `🔗 <b>لینک اختصاصی دعوت:</b>\n<code>${inviteLink}</code>`;
+        `🔗 <b>لینک اختصاصی دعوت:</b>\n<a href="${inviteLink}">${inviteLink}</a>`;
 
       await sendTelegramNotificationToAllAdmins(notifyMsg);
     } catch (e) {
