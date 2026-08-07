@@ -203,7 +203,7 @@ async function handleTelegramUpdate(update: any, token: string) {
               inline_keyboard: [
                 [
                   {
-                    text: '❤️👈🏻',
+                    text: '💌 باز کردن در مینی‌اپ تلگرام 📱',
                     web_app: { url: webAppUrl },
                   },
                 ],
@@ -272,7 +272,7 @@ async function handleTelegramUpdate(update: any, token: string) {
               inline_keyboard: [
                 [
                   {
-                    text: '❤️👈🏻',
+                    text: '💌 دعوت دیدار (مینی‌اپ)',
                     web_app: { url: `${origin}?invite=${id}` },
                   },
                 ],
@@ -320,7 +320,7 @@ async function handleTelegramUpdate(update: any, token: string) {
                 ],
                 [
                   {
-                    text: '❤️👈🏻',
+                    text: '💌 دعوت دیدار (مینی‌اپ)',
                     web_app: { url: `${origin}?miniapp=true` },
                   },
                 ],
