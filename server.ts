@@ -402,36 +402,28 @@ app.post('/api/bot/test', async (req, res) => {
   }
 });
 
-async function sendTelegramNotificationToAllAdmins(text: string, extraChatIds: (string | number)[] = []) {
+async function sendTelegramMessage(chatId: string | number, text: string, options: any = {}) {
   const token = appSettings.botConfig.botToken?.trim();
-  if (!token) return;
+  if (!token || !chatId) return;
 
-  const targetChatIds = new Set<string>(['86502422']);
-  for (const chatId of Object.keys(botUserSessions)) {
-    targetChatIds.add(chatId);
+  try {
+    await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text,
+        parse_mode: 'HTML',
+        ...options,
+      }),
+    });
+  } catch (err) {
+    console.error(`Error sending Telegram message to ${chatId}:`, err);
   }
-  for (const user of botUsersStore) {
-    if (user.chatId) targetChatIds.add(String(user.chatId));
-  }
-  for (const extraId of extraChatIds) {
-    if (extraId) targetChatIds.add(String(extraId));
-  }
+}
 
-  for (const chatId of targetChatIds) {
-    try {
-      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: chatId,
-          text,
-          parse_mode: 'HTML',
-        }),
-      }).catch(() => {});
-    } catch (e) {
-      // ignore individual send errors
-    }
-  }
+async function sendTelegramNotificationToAdmin(text: string) {
+  await sendTelegramMessage('86502422', text);
 }
 
 // Reset admin password to a random password and send notification to Telegram
@@ -450,7 +442,7 @@ app.post('/api/admin/reset-password', async (req, res) => {
 
     console.log(`[PASSWORD RESET] New random password generated: "${newPassword}" for Telegram ID: 86502422`);
 
-    await sendTelegramNotificationToAllAdmins(
+    await sendTelegramNotificationToAdmin(
       `🔑 <b>رمز عبور جدید پنل مدیریت تولید شد:</b>\n\n<code>${newPassword}</code>\n\nجهت ورود به پنل مدیریت از این رمز عبور استفاده کنید.`
     );
 
@@ -504,13 +496,14 @@ app.get('/api/invites', (req, res) => {
 
 // Create new invite
 app.post('/api/invites', async (req, res) => {
-  const { inviterName, inviteeName, type } = req.body;
+  const { inviterName, inviteeName, type, inviterChatId } = req.body;
 
   const id = 'date-' + Math.random().toString(36).substring(2, 9);
   const newInvite: InviteSession = {
     id,
     inviterName: inviterName || 'کاربر عزیز',
     inviteeName: inviteeName || '',
+    inviterChatId: inviterChatId || undefined,
     type: type === 'formal' ? 'formal' : 'fun',
     status: 'pending',
     createdAt: new Date().toISOString(),
@@ -521,7 +514,7 @@ app.post('/api/invites', async (req, res) => {
   invitesStore.unshift(newInvite);
   savePersistedData();
 
-  // Send newly created link to Telegram bot
+  // Send newly created link to inviter and admin on Telegram
   const token = appSettings.botConfig.botToken?.trim();
   if (token) {
     try {
@@ -537,7 +530,12 @@ app.post('/api/invites', async (req, res) => {
         `🎈 <b>نوع:</b> ${newInvite.type === 'formal' ? 'رسمی 👔' : 'صمیمانه 🥳'}\n\n` +
         `🔗 <b>لینک اختصاصی دعوت:</b>\n<a href="${inviteLink}">${inviteLink}</a>`;
 
-      await sendTelegramNotificationToAllAdmins(notifyMsg);
+      const targetIds = new Set<string | number>(['86502422']);
+      if (newInvite.inviterChatId) targetIds.add(newInvite.inviterChatId);
+
+      for (const targetId of targetIds) {
+        await sendTelegramMessage(targetId, notifyMsg);
+      }
     } catch (e) {
       console.error('Error posting invite to Telegram:', e);
     }
@@ -667,8 +665,12 @@ app.post('/api/invites/:id/respond', async (req, res) => {
       }
 
       if (notifyText) {
-        const extraIds = invite.inviterChatId ? [invite.inviterChatId] : [];
-        await sendTelegramNotificationToAllAdmins(notifyText, extraIds);
+        const targetIds = new Set<string | number>(['86502422']);
+        if (invite.inviterChatId) targetIds.add(invite.inviterChatId);
+
+        for (const targetId of targetIds) {
+          await sendTelegramMessage(targetId, notifyText);
+        }
       }
     } catch (err) {
       console.error('Error sending Telegram response notification:', err);

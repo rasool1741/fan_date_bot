@@ -43,6 +43,14 @@ export const MiniAppCreator: React.FC<MiniAppCreatorProps> = ({
     setLoading(true);
 
     try {
+      let inviterChatId: number | string | undefined = undefined;
+      if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
+        const tgUser = (window as any).Telegram.WebApp.initDataUnsafe?.user;
+        if (tgUser?.id) {
+          inviterChatId = tgUser.id;
+        }
+      }
+
       const res = await fetch('/api/invites', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -50,6 +58,7 @@ export const MiniAppCreator: React.FC<MiniAppCreatorProps> = ({
           inviterName: inviterName.trim() || 'یک دوست',
           inviteeName: inviteeName.trim() || 'مخاطب خاص',
           type: dateType,
+          inviterChatId,
         }),
       });
 

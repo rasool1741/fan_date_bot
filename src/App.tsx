@@ -171,10 +171,18 @@ export default function App() {
     if (!activeInviteId) return;
 
     try {
+      let inviteeChatId: number | string | undefined = undefined;
+      if (typeof window !== 'undefined' && (window as any).Telegram?.WebApp) {
+        const tgUser = (window as any).Telegram.WebApp.initDataUnsafe?.user;
+        if (tgUser?.id) {
+          inviteeChatId = tgUser.id;
+        }
+      }
+
       const body =
         activeInvite?.type === 'fun'
-          ? { funResponses: responses, status }
-          : { formalResponses: responses, status };
+          ? { funResponses: responses, status, inviteeChatId }
+          : { formalResponses: responses, status, inviteeChatId };
 
       const res = await fetch(`/api/invites/${activeInviteId}/respond`, {
         method: 'POST',
