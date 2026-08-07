@@ -15,10 +15,11 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<'admin' | 'users' | 'broadcast'>('admin');
   const [adminSubTab, setAdminSubTab] = useState<'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot' | 'security'>('stats');
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
-  const [isMiniAppRequested, setIsMiniAppRequested] = useState<boolean>(() => {
+  const [isAdminRequested, setIsAdminRequested] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
+      const pathname = window.location.pathname.toLowerCase();
       const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get('miniapp') === 'true' || urlParams.has('creator');
+      return pathname === '/admin' || pathname.startsWith('/admin/') || urlParams.get('admin') === 'true' || urlParams.has('panel');
     }
     return false;
   });
@@ -260,10 +261,14 @@ export default function App() {
 
   const handleAdminLogout = () => {
     setIsAdminAuthenticated(false);
+    setIsAdminRequested(false);
     if (typeof window !== 'undefined') {
       localStorage.removeItem('admin_authenticated');
+      if (window.location.pathname.toLowerCase().includes('admin') || window.location.search.includes('admin')) {
+        window.history.pushState({}, '', '/');
+      }
     }
-    showToast('از حساب مدیریت خارج شدید.');
+    showToast('از سیستم با موفقیت خارج شدید.');
   };
 
   // STANDALONE GUEST VIEW (When opened via Telegram Invite Link)
@@ -326,8 +331,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Header Navbar - Only shown when in Admin Panel */}
-      {isAdminAuthenticated && !isMiniAppRequested && (
+      {/* Header Navbar - Only shown when in Admin Mode and Authenticated */}
+      {isAdminRequested && isAdminAuthenticated && (
         <Navbar
           currentTab={currentTab}
           setCurrentTab={(tab) => {
@@ -339,22 +344,28 @@ export default function App() {
           soundEnabled={soundEnabled}
           setSoundEnabled={setSoundEnabled}
           onLogout={handleAdminLogout}
-          onOpenMiniAppPreview={() => setIsMiniAppRequested(true)}
+          onOpenMiniAppPreview={handleAdminLogout}
         />
       )}
 
       {/* Main Content Area */}
       <main className="flex-1 pb-16">
-        {isMiniAppRequested ? (
+        {!isAdminRequested ? (
           <MiniAppCreator
             settings={settings}
-            onBackToAdminPanel={isAdminAuthenticated ? () => setIsMiniAppRequested(false) : undefined}
+            onBackToAdminPanel={isAdminAuthenticated ? () => setIsAdminRequested(true) : undefined}
           />
         ) : !isAdminAuthenticated ? (
           <AdminLogin
             correctPassword={settings.adminPassword || 'admin'}
             recoveryEmail={settings.adminRecoveryEmail || 'rasoolramazani@gmail.com'}
             onLoginSuccess={handleAdminLoginSuccess}
+            onBackToMiniApp={() => {
+              setIsAdminRequested(false);
+              if (typeof window !== 'undefined') {
+                window.history.pushState({}, '', '/');
+              }
+            }}
             onPasswordReset={(newPass) => {
               setSettings((prev) => ({ ...prev, adminPassword: newPass }));
             }}

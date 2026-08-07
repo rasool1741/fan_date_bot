@@ -534,10 +534,11 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
           {onLogout && (
             <button
               onClick={onLogout}
-              className="px-3 py-2 rounded-xl text-xs font-bold transition-all text-rose-400 hover:bg-rose-950/60 hover:text-rose-300 border border-rose-500/30 shrink-0"
-              title="خروج از حساب مدیریت"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold transition-all bg-rose-500/20 hover:bg-rose-600 text-rose-200 hover:text-white border border-rose-500/40 shrink-0 cursor-pointer flex items-center gap-1.5 shadow-md shadow-rose-500/10 active:scale-95"
+              title="خروج از سیستم و بستن پنل مدیریت"
             >
-              خروج 🚪
+              <span>خروج از سیستم</span>
+              <span>🚪</span>
             </button>
           )}
         </div>

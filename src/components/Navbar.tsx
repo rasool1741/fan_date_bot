@@ -72,10 +72,10 @@ export const Navbar: React.FC<NavbarProps> = ({
           {onLogout && (
             <button
               onClick={onLogout}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition-colors flex items-center gap-1 shrink-0"
-              title="خروج از پنل مدیریت"
+              className="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-600 text-rose-200 hover:text-white border border-rose-500/40 transition-all flex items-center gap-1.5 shrink-0 cursor-pointer shadow-md shadow-rose-500/10 active:scale-95"
+              title="خروج از سیستم و بستن پنل مدیریت"
             >
-              <span>خروج</span>
+              <span>خروج از سیستم</span>
               <span>🚪</span>
             </button>
           )}
