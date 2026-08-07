@@ -8,6 +8,7 @@ interface NavbarProps {
   soundEnabled: boolean;
   setSoundEnabled: (enabled: boolean) => void;
   onLogout?: () => void;
+  onOpenMiniAppPreview?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -16,6 +17,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   soundEnabled,
   setSoundEnabled,
   onLogout,
+  onOpenMiniAppPreview,
 }) => {
   const toggleSound = () => {
     const next = !soundEnabled;
@@ -49,10 +51,20 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Controls */}
         <div className="flex items-center gap-2">
+          {onOpenMiniAppPreview && (
+            <button
+              onClick={onOpenMiniAppPreview}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition-colors flex items-center gap-1.5 shrink-0 cursor-pointer"
+              title="مشاهده مینی‌اپ کاربر"
+            >
+              <span>📱 پیش‌نمایش مینی‌اپ</span>
+            </button>
+          )}
+
           <button
             onClick={toggleSound}
             title={soundEnabled ? 'صدا فعال است' : 'صدا غیرفعال است'}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-colors"
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition-colors cursor-pointer"
           >
             {soundEnabled ? <Volume2 className="w-4 h-4 text-emerald-400" /> : <VolumeX className="w-4 h-4 text-slate-500" />}
           </button>

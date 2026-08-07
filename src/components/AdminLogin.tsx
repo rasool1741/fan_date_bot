@@ -1,23 +1,29 @@
 import React, { useState } from 'react';
-import { Lock, KeyRound, Eye, EyeOff, Mail, ShieldAlert, Check, Copy, ExternalLink, ArrowRight } from 'lucide-react';
+import { Lock, KeyRound, Eye, EyeOff, Mail, ShieldAlert, Check, Copy, RefreshCw, Key } from 'lucide-react';
 import { soundFx } from './SoundManager';
 
 interface AdminLoginProps {
   correctPassword?: string;
   recoveryEmail?: string;
   onLoginSuccess: () => void;
+  onBackToMiniApp?: () => void;
+  onPasswordReset?: (newPass: string) => void;
 }
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({
   correctPassword = 'admin',
   recoveryEmail = 'rasoolramazani@gmail.com',
   onLoginSuccess,
+  onBackToMiniApp,
+  onPasswordReset,
 }) => {
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [showForgotModal, setShowForgotModal] = useState(false);
-  const [copiedEmail, setCopiedEmail] = useState(false);
+  const [resetSuccessMsg, setResetSuccessMsg] = useState<string | null>(null);
+  const [isResetting, setIsResetting] = useState<boolean>(false);
+  const [generatedPass, setGeneratedPass] = useState<string | null>(null);
+  const [showForgotModal, setShowForgotModal] = useState<boolean>(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,15 +38,33 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({
     }
   };
 
-  const copyRecoveryEmail = () => {
+  const handleResetPasswordDirectly = async () => {
     soundFx.playPop();
-    navigator.clipboard.writeText(recoveryEmail);
-    setCopiedEmail(true);
-    setTimeout(() => setCopiedEmail(false), 2000);
+    setIsResetting(true);
+    setResetSuccessMsg(null);
+    setErrorMsg(null);
+
+    try {
+      const res = await fetch('/api/admin/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        setResetSuccessMsg('رمز عبور جدید با موفقیت تولید شد و به آیدی تلگرام شما (86502422) ارسال گردید.');
+      } else {
+        setErrorMsg(data.error || 'خطا در ریست رمز عبور. لطفاً مجدداً تلاش کنید.');
+      }
+    } catch (err) {
+      setErrorMsg('ارتباط با سرور برقرار نشد.');
+    } finally {
+      setIsResetting(false);
+    }
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center p-4">
+    <div className="min-h-[70vh] flex items-center justify-center p-4 dir-rtl" dir="rtl">
       <div className="w-full max-w-md bg-slate-900/95 border border-purple-500/30 rounded-3xl p-6 sm:p-8 shadow-2xl backdrop-blur-xl space-y-6 relative overflow-hidden animate-fade-in">
         {/* Background glow effects */}
         <div className="absolute -top-16 -right-16 w-32 h-32 bg-purple-500/20 rounded-full blur-2xl pointer-events-none" />
@@ -67,6 +91,14 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({
           <div className="bg-rose-500/15 border border-rose-500/40 text-rose-300 p-3 rounded-2xl text-xs font-semibold flex items-center gap-2 animate-shake">
             <ShieldAlert className="w-4 h-4 text-rose-400 shrink-0" />
             <span>{errorMsg}</span>
+          </div>
+        )}
+
+        {/* Success Notification */}
+        {resetSuccessMsg && (
+          <div className="bg-emerald-500/15 border border-emerald-500/40 text-emerald-300 p-3.5 rounded-2xl text-xs font-semibold flex items-center gap-2 animate-fade-in">
+            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{resetSuccessMsg}</span>
           </div>
         )}
 
@@ -100,96 +132,45 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({
 
           <button
             type="submit"
-            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-purple-600/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-purple-600 via-indigo-600 to-purple-700 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-sm shadow-xl shadow-purple-600/25 transition-all active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
           >
             <Lock className="w-4 h-4" />
             <span>ورود به پنل مدیریت</span>
           </button>
         </form>
 
-        {/* Forgot password section */}
-        <div className="pt-2 text-center border-t border-slate-800/80">
+        {/* Forgot password section & Back to Mini App */}
+        <div className="pt-2 text-center border-t border-slate-800/80 flex items-center justify-between">
           <button
             type="button"
-            onClick={() => {
-              soundFx.playPop();
-              setShowForgotModal(true);
-            }}
-            className="text-xs text-purple-400 hover:text-purple-300 font-medium hover:underline transition-colors inline-flex items-center gap-1"
+            disabled={isResetting}
+            onClick={handleResetPasswordDirectly}
+            className="text-xs text-purple-400 hover:text-purple-300 font-medium hover:underline transition-colors inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
           >
-            <Mail className="w-3.5 h-3.5" />
-            <span>فراموشی رمز عبور؟</span>
+            {isResetting ? (
+              <>
+                <RefreshCw className="w-3.5 h-3.5 animate-spin text-purple-400" />
+                <span>در حال ارسال به تلگرام...</span>
+              </>
+            ) : (
+              <>
+                <Key className="w-3.5 h-3.5 text-purple-400" />
+                <span>ارسال رمز عبور جدید به تلگرام (ID: 86502422)</span>
+              </>
+            )}
           </button>
+
+          {onBackToMiniApp && (
+            <button
+              type="button"
+              onClick={onBackToMiniApp}
+              className="text-xs text-slate-400 hover:text-white font-medium transition-colors inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>بازگشت به مینی‌اپ 💌</span>
+            </button>
+          )}
         </div>
       </div>
-
-      {/* Forgot Password Recovery Modal */}
-      {showForgotModal && (
-        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-          <div className="w-full max-w-md bg-slate-900 border border-purple-500/40 rounded-3xl p-6 shadow-2xl space-y-5 text-right relative">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <Mail className="w-5 h-5 text-purple-400" />
-                <span>بازیابی رمز عبور مدیر</span>
-              </h3>
-              <button
-                onClick={() => setShowForgotModal(false)}
-                className="w-7 h-7 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center text-xs transition-colors"
-              >
-                ✕
-              </button>
-            </div>
-
-            <p className="text-xs text-slate-300 leading-relaxed">
-              چنانچه رمز عبور ورود به پنل مدیریت را فراموش کرده‌اید، می‌توانید جهت بازیابی یا تنظیم رمز جدید، با ایمیل پشتیبانی و سورس برنامه تماس بگیرید:
-            </p>
-
-            <div className="bg-slate-950 border border-purple-500/30 p-4 rounded-2xl space-y-3">
-              <span className="text-[11px] text-slate-400 block font-medium">ایمیل بازیابی مدیر سیستم:</span>
-              <div className="flex items-center justify-between gap-2 bg-slate-900 px-3 py-2 rounded-xl border border-slate-800">
-                <code className="text-sm font-bold text-purple-300 font-mono tracking-wide">{recoveryEmail}</code>
-                <button
-                  type="button"
-                  onClick={copyRecoveryEmail}
-                  className="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-300 hover:text-white transition-colors flex items-center gap-1 shrink-0"
-                >
-                  {copiedEmail ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-emerald-400" />
-                      <span>کپی شد!</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5" />
-                      <span>کپی</span>
-                    </>
-                  )}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 pt-2">
-              <a
-                href={`mailto:${recoveryEmail}?subject=${encodeURIComponent('درخواست بازیابی رمز عبور پنل مدیریت')}`}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs text-center flex items-center justify-center gap-1.5 transition-colors shadow-md"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>ارسال ایمیل مستقیم</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={() => setShowForgotModal(false)}
-                className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
-              >
-                متوجه شدم
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

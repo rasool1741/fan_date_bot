@@ -5,6 +5,7 @@ import { FunInviteeFlow } from './components/FunInviteeFlow';
 import { FormalInviteeFlow } from './components/FormalInviteeFlow';
 import { AdminPanel } from './components/AdminPanel';
 import { AdminLogin } from './components/AdminLogin';
+import { MiniAppCreator } from './components/MiniAppCreator';
 import { defaultSettings, defaultDemoInvites } from './data/defaultData';
 import { AppSettings, InviteSession, StatsOverview } from './types';
 import { soundFx } from './components/SoundManager';
@@ -14,6 +15,13 @@ export default function App() {
   const [currentTab, setCurrentTab] = useState<'admin' | 'users' | 'broadcast'>('admin');
   const [adminSubTab, setAdminSubTab] = useState<'stats' | 'invites' | 'users' | 'broadcast' | 'questions' | 'bot' | 'security'>('stats');
   const [soundEnabled, setSoundEnabled] = useState<boolean>(true);
+  const [isMiniAppRequested, setIsMiniAppRequested] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('miniapp') === 'true' || urlParams.has('creator');
+    }
+    return false;
+  });
   const [isStandaloneGuestMode, setIsStandaloneGuestMode] = useState<boolean>(() => {
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -315,8 +323,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Header Navbar - Only shown when logged in */}
-      {isAdminAuthenticated && (
+      {/* Header Navbar - Only shown when in Admin Panel */}
+      {isAdminAuthenticated && !isMiniAppRequested && (
         <Navbar
           currentTab={currentTab}
           setCurrentTab={(tab) => {
@@ -328,16 +336,26 @@ export default function App() {
           soundEnabled={soundEnabled}
           setSoundEnabled={setSoundEnabled}
           onLogout={handleAdminLogout}
+          onOpenMiniAppPreview={() => setIsMiniAppRequested(true)}
         />
       )}
 
       {/* Main Content Area */}
       <main className="flex-1 pb-16">
-        {!isAdminAuthenticated ? (
+        {isMiniAppRequested ? (
+          <MiniAppCreator
+            settings={settings}
+            onPreviewInvite={(id) => handleOpenInvitePage(id)}
+            onBackToAdminPanel={isAdminAuthenticated ? () => setIsMiniAppRequested(false) : undefined}
+          />
+        ) : !isAdminAuthenticated ? (
           <AdminLogin
             correctPassword={settings.adminPassword || 'admin'}
             recoveryEmail={settings.adminRecoveryEmail || 'rasoolramazani@gmail.com'}
             onLoginSuccess={handleAdminLoginSuccess}
+            onPasswordReset={(newPass) => {
+              setSettings((prev) => ({ ...prev, adminPassword: newPass }));
+            }}
           />
         ) : (
           <AdminPanel

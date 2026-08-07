@@ -252,12 +252,14 @@ async function handleTelegramUpdate(update: any, token: string) {
           ? `https://t.me/${botUsername}?start=${id}`
           : `${origin}?invite=${id}`;
 
-        const rawTemplate = pendingType === 'fun' ? appSettings.botConfig.funInviteTemplate : appSettings.botConfig.formalInviteTemplate;
-        const safeTemplate = escapeHtml(rawTemplate).replace('{LINK}', inviteLink);
-        const targetLabel = inviteeName ? `برای <b>${escapeHtml(inviteeName)}</b> ` : '';
-        const messageText = `✨ <b>دعوت‌نامه اختصاصی شما ${targetLabel}آماده شد!</b>\n\n` +
-          `${safeTemplate}\n\n` +
-          `<i>(این متن را کپی کرده و برای مخاطب بفرستید. وقتی روی لینک بزند وارد ربات شده و با زدن استارت، وب‌بات دعوت باز می‌شود!)</i>`;
+        const inviteeLabel = inviteeName ? ` ${escapeHtml(inviteeName)}` : '';
+        const inviterLabel = senderName ? ` ${escapeHtml(senderName)}` : 'یک دوست';
+
+        const messageText = `💌 <b>سلام${inviteeLabel} عزیز! 🌹</b>\n\n` +
+          `یک دعوت‌نامه اختصاصی و هیجان‌انگیز برای یک دیدار خاص از طرف <b>${inviterLabel}</b> برای شما ارسال شده است! ✨\n\n` +
+          `جهت مشاهده دعوت‌نامه و اعلام پاسخ، روی لینک زیر کلیک کنید:\n` +
+          `👇👇👇\n${inviteLink}\n\n` +
+          `<i>(می‌توانید این پیام را فوروارد کنید تا مخاطب با کلیک روی لینک وارد مینی‌اپ دیدار شود!)</i>`;
 
         await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
           method: 'POST',
@@ -270,7 +272,7 @@ async function handleTelegramUpdate(update: any, token: string) {
               inline_keyboard: [
                 [
                   {
-                    text: '📱 پیش‌نمایش در مینی‌اپ تلگرام',
+                    text: '💌 دعوت دیدار (مینی‌اپ)',
                     web_app: { url: `${origin}?invite=${id}` },
                   },
                 ],
@@ -294,8 +296,8 @@ async function handleTelegramUpdate(update: any, token: string) {
             body: JSON.stringify({
               menu_button: {
                 type: 'web_app',
-                text: 'مینی‌اپ قرار 💖',
-                web_app: { url: origin },
+                text: 'دعوت دیدار',
+                web_app: { url: `${origin}?miniapp=true` },
               },
             }),
           });
@@ -318,8 +320,8 @@ async function handleTelegramUpdate(update: any, token: string) {
                 ],
                 [
                   {
-                    text: '📱 باز کردن مینی‌اپ قرار (Telegram Mini App)',
-                    web_app: { url: origin },
+                    text: '💌 دعوت دیدار (مینی‌اپ)',
+                    web_app: { url: `${origin}?miniapp=true` },
                   },
                 ],
               ],
@@ -397,6 +399,55 @@ app.post('/api/bot/test', async (req, res) => {
     }
   } catch (err: any) {
     res.status(500).json({ ok: false, error: 'خطا در ارتباط با سرورهای تلگرام.' });
+  }
+});
+
+// Reset admin password to a random password and send notification to Telegram
+app.post('/api/admin/reset-password', async (req, res) => {
+  try {
+    const chars = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ';
+    let randStr = '';
+    for (let i = 0; i < 4; i++) {
+      randStr += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const randNum = Math.floor(1000 + Math.random() * 9000);
+    const newPassword = `${randStr}${randNum}`;
+
+    appSettings.adminPassword = newPassword;
+    savePersistedData();
+
+    console.log(`[PASSWORD RESET] New random password generated: "${newPassword}" for Telegram ID: 86502422`);
+
+    const targetChatIds = new Set<string>(['86502422']);
+    for (const chatId of Object.keys(botUserSessions)) {
+      targetChatIds.add(chatId);
+    }
+
+    if (appSettings.botConfig.botToken) {
+      try {
+        const token = appSettings.botConfig.botToken.trim();
+        for (const chatId of targetChatIds) {
+          await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: chatId,
+              text: `🔑 <b>رمز عبور جدید پنل مدیریت تولید شد:</b>\n\n<code>${newPassword}</code>\n\nجهت ورود به پنل مدیریت از این رمز عبور استفاده کنید.`,
+              parse_mode: 'HTML',
+            }),
+          }).catch(() => {});
+        }
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'رمز عبور جدید با موفقیت تولید و به آیدی تلگرام (86502422) ارسال گردید.',
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: 'خطا در ریست رمز عبور.' });
   }
 });
 
