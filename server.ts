@@ -80,6 +80,39 @@ const PORT = 3000;
 
 app.use(express.json());
 
+let detectedOrigin = '';
+
+function getAppOrigin(): string {
+  if (appSettings.botConfig.appUrl && appSettings.botConfig.appUrl.trim()) {
+    let url = appSettings.botConfig.appUrl.trim();
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://' + url;
+    }
+    return url.replace(/\/$/, '');
+  }
+  if (process.env.RENDER_EXTERNAL_URL) {
+    return process.env.RENDER_EXTERNAL_URL.replace(/\/$/, '');
+  }
+  if (process.env.APP_URL) {
+    return process.env.APP_URL.replace(/\/$/, '');
+  }
+  if (detectedOrigin) {
+    return detectedOrigin.replace(/\/$/, '');
+  }
+  return 'https://fan-date-bot.onrender.com';
+}
+
+app.use((req, res, next) => {
+  if (req.headers.host) {
+    const proto = (req.headers['x-forwarded-proto'] as string) || req.protocol || 'https';
+    const host = (req.headers['x-forwarded-host'] as string) || req.headers.host;
+    if (host && !host.includes('localhost') && !host.includes('127.0.0.1')) {
+      detectedOrigin = `${proto}://${host}`;
+    }
+  }
+  next();
+});
+
 // Helper to compute stats
 function calculateStats(): StatsOverview {
   const totalInvites = invitesStore.length;
@@ -161,7 +194,7 @@ async function pollTelegramUpdates() {
 
 async function handleTelegramUpdate(update: any, token: string) {
   try {
-    const origin = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || 'https://fan-date-bot.onrender.com';
+    const origin = getAppOrigin();
     
     // Message handling
     if (update.message) {
@@ -518,7 +551,7 @@ app.post('/api/invites', async (req, res) => {
   const token = appSettings.botConfig.botToken?.trim();
   if (token) {
     try {
-      const origin = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || 'https://fan-date-bot.onrender.com';
+      const origin = getAppOrigin();
       const botUsername = await getBotUsername(token);
       const inviteLink = botUsername
         ? `https://t.me/${botUsername}?start=${id}`

@@ -75,6 +75,7 @@ export interface BotConfig {
   formalInviteTemplate: string;
   botToken?: string;
   botUsername?: string;
+  appUrl?: string;
 }
 
 export interface AppSettings {
@@ -82,6 +83,7 @@ export interface AppSettings {
   formalQuestions: FormalQuestionConfig;
   botConfig: BotConfig;
   adminPassword?: string;
+  adminSecretKey?: string;
   adminRecoveryEmail?: string;
 }
 

@@ -55,8 +55,10 @@ export const defaultSettings: AppSettings = {
 {LINK}`,
     botToken: '',
     botUsername: 'Fun_Date_bot',
+    appUrl: '',
   },
   adminPassword: 'admin',
+  adminSecretKey: 'mysecretkey123',
   adminRecoveryEmail: 'rasoolramazani@gmail.com',
 };
 

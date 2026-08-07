@@ -1499,6 +1499,26 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
             </div>
 
             <div>
+              <label className="text-xs text-slate-400 block mb-1 font-medium">آدرس وب‌سایت / مینی‌اپ در رندر (App URL):</label>
+              <input
+                type="text"
+                value={formSettings.botConfig.appUrl || ''}
+                onChange={(e) => {
+                  isFormDirty.current = true;
+                  setFormSettings({
+                    ...formSettings,
+                    botConfig: { ...formSettings.botConfig, appUrl: e.target.value },
+                  });
+                }}
+                placeholder="مثلاً: https://your-app-name.onrender.com"
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-mono focus:outline-none focus:border-purple-500"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                در صورت خالی بودن، آدرس به صورت هوشمند از درخواست‌های سرور یا متغیرهای رندر (RENDER_EXTERNAL_URL) دریافت می‌شود.
+              </p>
+            </div>
+
+            <div>
               <label className="text-xs text-slate-400 block mb-1">متن خوش‌آمدگویی بات (/start):</label>
               <textarea
                 rows={3}
@@ -1613,8 +1633,59 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 </button>
               </div>
               <p className="text-[11px] text-slate-500">
-                این رمز عبور برای ورود به بخش مدیریت برنامه استفاده می‌شود.
+                این رمز عبور برای ورود به صفحه پنل مدیریت استفاده می‌شود.
               </p>
+            </div>
+
+            {/* Secret Key & Link Configuration */}
+            <div className="bg-slate-950 p-4 rounded-2xl border border-amber-500/20 space-y-3">
+              <label className="text-xs text-amber-300 font-bold block flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-amber-400" />
+                <span>کلید اختصاصی / محرمانه ورود به پنل مدیریت (Secret Key):</span>
+              </label>
+              <input
+                type="text"
+                value={formSettings.adminSecretKey || ''}
+                onChange={(e) => {
+                  isFormDirty.current = true;
+                  setFormSettings({
+                    ...formSettings,
+                    adminSecretKey: e.target.value,
+                  });
+                }}
+                placeholder="مثلاً: mysecretkey123 یا admin_panel_key"
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-amber-200 text-xs font-mono focus:outline-none focus:border-amber-500"
+              />
+              <p className="text-[11px] text-slate-400">
+                به جای عبارتهای عمومی مثل <code className="text-slate-300 font-mono">admin</code>، با استفاده از این کلید محرمانه لینک اختصاصی ورود برای شما ایجاد می‌شود.
+              </p>
+
+              {/* Sample link preview */}
+              <div className="mt-3 bg-slate-900/80 p-3 rounded-xl border border-slate-800 space-y-2">
+                <div className="text-[11px] text-slate-400 font-medium">لینک اختصاصی ورود شما به پنل مدیریت:</div>
+                <div className="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-lg border border-slate-800 text-xs font-mono text-purple-300 overflow-x-auto">
+                  <span>
+                    {(formSettings.botConfig.appUrl && formSettings.botConfig.appUrl.trim())
+                      ? formSettings.botConfig.appUrl.trim().replace(/\/$/, '')
+                      : (typeof window !== 'undefined' ? window.location.origin : 'https://your-app.onrender.com')}
+                    ?key={formSettings.adminSecretKey || 'mysecretkey123'}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const baseUrl = (formSettings.botConfig.appUrl && formSettings.botConfig.appUrl.trim())
+                      ? formSettings.botConfig.appUrl.trim().replace(/\/$/, '')
+                      : (typeof window !== 'undefined' ? window.location.origin : 'https://your-app.onrender.com');
+                    const fullSecretUrl = `${baseUrl}?key=${formSettings.adminSecretKey || 'mysecretkey123'}`;
+                    navigator.clipboard.writeText(fullSecretUrl);
+                    alert('لینک اختصاصی ورود به پنل مدیریت کپی شد! 📋');
+                  }}
+                  className="px-3 py-1.5 bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 border border-purple-500/30 rounded-lg text-xs font-bold transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  <span>📋 کپی لینک اختصاصی ورود به پنل</span>
+                </button>
+              </div>
             </div>
 
 

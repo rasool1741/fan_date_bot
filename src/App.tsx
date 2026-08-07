@@ -19,7 +19,15 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const pathname = window.location.pathname.toLowerCase();
       const urlParams = new URLSearchParams(window.location.search);
-      return pathname === '/admin' || pathname.startsWith('/admin/') || urlParams.get('admin') === 'true' || urlParams.has('panel');
+      const secret = urlParams.get('key') || urlParams.get('secret') || urlParams.get('admin');
+      
+      // Check if URL has matching secret key parameter or path matching secret
+      return (
+        urlParams.get('admin') === 'true' ||
+        urlParams.has('panel') ||
+        (secret && secret.length > 0) ||
+        pathname.includes('secret')
+      );
     }
     return false;
   });
@@ -116,7 +124,7 @@ export default function App() {
       fetchData();
     }, 3000);
 
-    // Check URL parameters for ?invite=id
+    // Check URL parameters for ?invite=id or ?key=secretKey or /key
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const inviteId = urlParams.get('invite');
@@ -124,6 +132,12 @@ export default function App() {
         loadInviteSession(inviteId);
         setCurrentTab('invitee');
         setIsStandaloneGuestMode(true);
+      } else {
+        const keyParam = urlParams.get('key') || urlParams.get('secret') || urlParams.get('admin');
+        const path = window.location.pathname.toLowerCase().replace(/^\//, '');
+        if (keyParam || path === 'admin' || path.includes('key') || path.includes('secret')) {
+          setIsAdminRequested(true);
+        }
       }
     }
 
