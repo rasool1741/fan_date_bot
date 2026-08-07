@@ -1657,7 +1657,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-amber-200 text-xs font-mono focus:outline-none focus:border-amber-500"
               />
               <p className="text-[11px] text-slate-400">
-                به جای عبارتهای عمومی مثل <code className="text-slate-300 font-mono">admin</code>، با استفاده از این کلید محرمانه لینک اختصاصی ورود برای شما ایجاد می‌شود.
+                با باز کردن این لینک، فرم ورود به پنل مدیریت باز می‌شود و برای ورود باید رمز عبور مدیریت را وارد نمایید.
               </p>
 
               {/* Sample link preview */}

@@ -124,7 +124,7 @@ export default function App() {
       fetchData();
     }, 3000);
 
-    // Check URL parameters for ?invite=id or ?key=secretKey or /key
+    // Check URL parameters for ?invite=id or ?key=secretKey or /secret
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
       const inviteId = urlParams.get('invite');
@@ -135,6 +135,7 @@ export default function App() {
       } else {
         const keyParam = urlParams.get('key') || urlParams.get('secret') || urlParams.get('admin');
         const path = window.location.pathname.toLowerCase().replace(/^\//, '');
+        // If keyParam matches or path is matching, show login screen (not bypass password)
         if (keyParam || path === 'admin' || path.includes('key') || path.includes('secret')) {
           setIsAdminRequested(true);
         }

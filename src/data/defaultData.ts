@@ -55,7 +55,7 @@ export const defaultSettings: AppSettings = {
 {LINK}`,
     botToken: '',
     botUsername: 'Fun_Date_bot',
-    appUrl: '',
+    appUrl: 'https://fan-date-bot.onrender.com',
   },
   adminPassword: 'admin',
   adminSecretKey: 'mysecretkey123',
