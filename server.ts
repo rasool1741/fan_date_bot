@@ -203,7 +203,7 @@ async function handleTelegramUpdate(update: any, token: string) {
               inline_keyboard: [
                 [
                   {
-                    text: '💌 باز کردن در مینی‌اپ تلگرام 📱',
+                    text: '❤️👈🏻',
                     web_app: { url: webAppUrl },
                   },
                 ],
@@ -272,7 +272,7 @@ async function handleTelegramUpdate(update: any, token: string) {
               inline_keyboard: [
                 [
                   {
-                    text: '💌 دعوت دیدار (مینی‌اپ)',
+                    text: '❤️👈🏻',
                     web_app: { url: `${origin}?invite=${id}` },
                   },
                 ],
@@ -296,7 +296,7 @@ async function handleTelegramUpdate(update: any, token: string) {
             body: JSON.stringify({
               menu_button: {
                 type: 'web_app',
-                text: 'دعوت دیدار',
+                text: '❤️👈🏻',
                 web_app: { url: `${origin}?miniapp=true` },
               },
             }),
@@ -320,7 +320,7 @@ async function handleTelegramUpdate(update: any, token: string) {
                 ],
                 [
                   {
-                    text: '💌 دعوت دیدار (مینی‌اپ)',
+                    text: '❤️👈🏻',
                     web_app: { url: `${origin}?miniapp=true` },
                   },
                 ],
@@ -530,11 +530,8 @@ app.post('/api/invites', async (req, res) => {
         `🎈 <b>نوع:</b> ${newInvite.type === 'formal' ? 'رسمی 👔' : 'صمیمانه 🥳'}\n\n` +
         `🔗 <b>لینک اختصاصی دعوت:</b>\n<a href="${inviteLink}">${inviteLink}</a>`;
 
-      const targetIds = new Set<string | number>(['86502422']);
-      if (newInvite.inviterChatId) targetIds.add(newInvite.inviterChatId);
-
-      for (const targetId of targetIds) {
-        await sendTelegramMessage(targetId, notifyMsg);
+      if (newInvite.inviterChatId) {
+        await sendTelegramMessage(newInvite.inviterChatId, notifyMsg);
       }
     } catch (e) {
       console.error('Error posting invite to Telegram:', e);
@@ -664,13 +661,8 @@ app.post('/api/invites/:id/respond', async (req, res) => {
         notifyText += `\n\n💬 <b>پیام/شماره تماس مخاطب:</b>\n${escapeHtml(invite.formalResponses.customNote)}`;
       }
 
-      if (notifyText) {
-        const targetIds = new Set<string | number>(['86502422']);
-        if (invite.inviterChatId) targetIds.add(invite.inviterChatId);
-
-        for (const targetId of targetIds) {
-          await sendTelegramMessage(targetId, notifyText);
-        }
+      if (notifyText && invite.inviterChatId) {
+        await sendTelegramMessage(invite.inviterChatId, notifyText);
       }
     } catch (err) {
       console.error('Error sending Telegram response notification:', err);
