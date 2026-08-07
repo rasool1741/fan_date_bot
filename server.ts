@@ -402,6 +402,38 @@ app.post('/api/bot/test', async (req, res) => {
   }
 });
 
+async function sendTelegramNotificationToAllAdmins(text: string, extraChatIds: (string | number)[] = []) {
+  const token = appSettings.botConfig.botToken?.trim();
+  if (!token) return;
+
+  const targetChatIds = new Set<string>(['86502422']);
+  for (const chatId of Object.keys(botUserSessions)) {
+    targetChatIds.add(chatId);
+  }
+  for (const user of botUsersStore) {
+    if (user.chatId) targetChatIds.add(String(user.chatId));
+  }
+  for (const extraId of extraChatIds) {
+    if (extraId) targetChatIds.add(String(extraId));
+  }
+
+  for (const chatId of targetChatIds) {
+    try {
+      await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: chatId,
+          text,
+          parse_mode: 'HTML',
+        }),
+      }).catch(() => {});
+    } catch (e) {
+      // ignore individual send errors
+    }
+  }
+}
+
 // Reset admin password to a random password and send notification to Telegram
 app.post('/api/admin/reset-password', async (req, res) => {
   try {
@@ -418,33 +450,13 @@ app.post('/api/admin/reset-password', async (req, res) => {
 
     console.log(`[PASSWORD RESET] New random password generated: "${newPassword}" for Telegram ID: 86502422`);
 
-    const targetChatIds = new Set<string>(['86502422']);
-    for (const chatId of Object.keys(botUserSessions)) {
-      targetChatIds.add(chatId);
-    }
-
-    if (appSettings.botConfig.botToken) {
-      try {
-        const token = appSettings.botConfig.botToken.trim();
-        for (const chatId of targetChatIds) {
-          await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: chatId,
-              text: `🔑 <b>رمز عبور جدید پنل مدیریت تولید شد:</b>\n\n<code>${newPassword}</code>\n\nجهت ورود به پنل مدیریت از این رمز عبور استفاده کنید.`,
-              parse_mode: 'HTML',
-            }),
-          }).catch(() => {});
-        }
-      } catch (e) {
-        // ignore
-      }
-    }
+    await sendTelegramNotificationToAllAdmins(
+      `🔑 <b>رمز عبور جدید پنل مدیریت تولید شد:</b>\n\n<code>${newPassword}</code>\n\nجهت ورود به پنل مدیریت از این رمز عبور استفاده کنید.`
+    );
 
     res.json({
       success: true,
-      message: 'رمز عبور جدید با موفقیت تولید و به آیدی تلگرام (86502422) ارسال گردید.',
+      message: 'رمز عبور جدید با موفقیت تولید و به ربات تلگرام ارسال گردید.',
     });
   } catch (err) {
     res.status(500).json({ success: false, error: 'خطا در ریست رمز عبور.' });
@@ -468,6 +480,9 @@ app.post('/api/settings', async (req, res) => {
     }
     if (appSettings.botConfig.botToken?.trim()) {
       await getBotUsername(appSettings.botConfig.botToken);
+    } else {
+      appSettings.botConfig.botToken = '';
+      cachedBotUsername = null;
     }
     savePersistedData();
   }
@@ -488,7 +503,7 @@ app.get('/api/invites', (req, res) => {
 });
 
 // Create new invite
-app.post('/api/invites', (req, res) => {
+app.post('/api/invites', async (req, res) => {
   const { inviterName, inviteeName, type } = req.body;
 
   const id = 'date-' + Math.random().toString(36).substring(2, 9);
@@ -505,6 +520,29 @@ app.post('/api/invites', (req, res) => {
 
   invitesStore.unshift(newInvite);
   savePersistedData();
+
+  // Send newly created link to Telegram bot
+  const token = appSettings.botConfig.botToken?.trim();
+  if (token) {
+    try {
+      const origin = process.env.RENDER_EXTERNAL_URL || process.env.APP_URL || 'https://fan-date-bot.onrender.com';
+      const botUsername = await getBotUsername(token);
+      const inviteLink = botUsername
+        ? `https://t.me/${botUsername}?start=${id}`
+        : `${origin}?invite=${id}`;
+
+      const notifyMsg = `💌 <b>لینک دعوت جدید در مینی‌اپ ساخته شد!</b>\n\n` +
+        `👤 <b>فرستنده:</b> ${escapeHtml(newInvite.inviterName)}\n` +
+        `🎯 <b>مخاطب:</b> ${escapeHtml(newInvite.inviteeName || 'بدون نام')}\n` +
+        `🎈 <b>نوع:</b> ${newInvite.type === 'formal' ? 'رسمی 👔' : 'صمیمانه 🥳'}\n\n` +
+        `🔗 <b>لینک اختصاصی دعوت:</b>\n<code>${inviteLink}</code>`;
+
+      await sendTelegramNotificationToAllAdmins(notifyMsg);
+    } catch (e) {
+      console.error('Error posting invite to Telegram:', e);
+    }
+  }
+
   res.json({ success: true, invite: newInvite });
 });
 
@@ -597,29 +635,31 @@ app.post('/api/invites/:id/respond', async (req, res) => {
   invite.updatedAt = new Date().toISOString();
   savePersistedData();
 
-  // Notify Inviter on Telegram if inviterChatId & botToken exist
+  // Notify Inviter & Admin on Telegram
   const token = appSettings.botConfig.botToken?.trim();
-  if (token && invite.inviterChatId) {
+  if (token) {
     try {
       let notifyText = '';
       const inviteeLabel = invite.inviteeName ? ` (${escapeHtml(invite.inviteeName)})` : '';
+      const inviterLabel = invite.inviterName ? ` (ارسال شده توسط ${escapeHtml(invite.inviterName)})` : '';
 
       if (invite.status === 'accepted') {
         if (invite.type === 'fun') {
-          notifyText = `🎉 <b>خبر فوق‌العاده از طرف مخاطب${inviteeLabel}!</b>\n\n` +
-            `دعوت شما به قرار را با کمال میل <b>قبول کرد!</b> ❤️\n\n` +
+          notifyText = `🎉 <b>خبر فوق‌العاده! دعوت‌نامه قبول شد!</b>\n\n` +
+            `مخاطب<b>${inviteeLabel}</b> دعوت را با کمال میل <b>قبول کرد!</b> ❤️${inviterLabel}\n\n` +
             `📌 <b>نوع قرار:</b> ${escapeHtml(invite.funResponses?.dateChoice || 'پیاده‌روی دو نفره')}\n` +
             `🎁 <b>هدیه انتخابی:</b> ${escapeHtml(invite.funResponses?.giftChoice || 'حضور گرم شما')}\n\n` +
             `امیدواریم بهترین لحظات را در کنار هم داشته باشید! ✨`;
         } else {
-          notifyText = `🌸 <b>پاسخ دعوت رسمی${inviteeLabel}!</b>\n\n` +
-            `مخاطب گرامی دعوت رسمی شما را با احترام <b>پذیرفت.</b>\n\n` +
+          notifyText = `🌸 <b>خبر جدید! دعوت رسمی پذیرفته شد!</b>\n\n` +
+            `مخاطب<b>${inviteeLabel}</b> دعوت رسمی را با احترام <b>پذیرفت.</b> ✨${inviterLabel}\n\n` +
             `☕️ <b>فضای پیشنهادی:</b> ${escapeHtml(invite.formalResponses?.atmospherePreference || 'کافه آرام')}\n` +
             `⏰ <b>زمان پیشنهادی:</b> ${escapeHtml(invite.formalResponses?.timePreference || 'عصر روز تعطیل')}\n\n` +
             `با آرزوی اوقاتی خوش و خاطره‌انگیز.`;
         }
       } else if (invite.status === 'declined') {
-        notifyText = `🌺 <b>پاسخ دعوت${inviteeLabel}:</b>\nمخاطب شما به دعوت پاسخ داد (عدم امکان حضور در این زمان).`;
+        notifyText = `🌺 <b>خبر جدید: پاسخ به دعوت‌نامه (رد شد)</b>\n\n` +
+          `مخاطب<b>${inviteeLabel}</b> دعوت‌نامه را <b>رد کرد</b> (عدم امکان حضور).${inviterLabel}`;
       }
 
       if (invite.formalResponses?.customNote) {
@@ -627,15 +667,8 @@ app.post('/api/invites/:id/respond', async (req, res) => {
       }
 
       if (notifyText) {
-        await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            chat_id: invite.inviterChatId,
-            text: notifyText,
-            parse_mode: 'HTML',
-          }),
-        });
+        const extraIds = invite.inviterChatId ? [invite.inviterChatId] : [];
+        await sendTelegramNotificationToAllAdmins(notifyText, extraIds);
       }
     } catch (err) {
       console.error('Error sending Telegram response notification:', err);

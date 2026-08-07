@@ -73,18 +73,12 @@ export default function App() {
       if (settingsRes.ok) {
         const settingsData: AppSettings = await settingsRes.json();
         
-        // Restore/Backup sync with localStorage
+        // Sync token with localStorage (only save if present, remove if empty)
         if (typeof window !== 'undefined') {
-          const cachedToken = localStorage.getItem('telegram_bot_token');
-          if (!settingsData.botConfig?.botToken && cachedToken) {
-            settingsData.botConfig = { ...settingsData.botConfig, botToken: cachedToken };
-            fetch('/api/settings', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(settingsData),
-            });
-          } else if (settingsData.botConfig?.botToken) {
+          if (settingsData.botConfig?.botToken) {
             localStorage.setItem('telegram_bot_token', settingsData.botConfig.botToken);
+          } else {
+            localStorage.removeItem('telegram_bot_token');
           }
         }
 
@@ -205,8 +199,12 @@ export default function App() {
 
   const handleUpdateSettings = async (newSettings: AppSettings) => {
     try {
-      if (typeof window !== 'undefined' && newSettings.botConfig?.botToken) {
-        localStorage.setItem('telegram_bot_token', newSettings.botConfig.botToken);
+      if (typeof window !== 'undefined') {
+        if (newSettings.botConfig?.botToken) {
+          localStorage.setItem('telegram_bot_token', newSettings.botConfig.botToken);
+        } else {
+          localStorage.removeItem('telegram_bot_token');
+        }
       }
       const res = await fetch('/api/settings', {
         method: 'POST',
@@ -345,7 +343,6 @@ export default function App() {
         {isMiniAppRequested ? (
           <MiniAppCreator
             settings={settings}
-            onPreviewInvite={(id) => handleOpenInvitePage(id)}
             onBackToAdminPanel={isAdminAuthenticated ? () => setIsMiniAppRequested(false) : undefined}
           />
         ) : !isAdminAuthenticated ? (

@@ -52,7 +52,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({
       const data = await res.json();
 
       if (res.ok && data.success) {
-        setResetSuccessMsg('رمز عبور جدید با موفقیت تولید شد و به آیدی تلگرام شما (86502422) ارسال گردید.');
+        setResetSuccessMsg('رمز عبور جدید با موفقیت به ربات تلگرام ارسال گردید.');
       } else {
         setErrorMsg(data.error || 'خطا در ریست رمز عبور. لطفاً مجدداً تلاش کنید.');
       }
@@ -155,7 +155,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({
             ) : (
               <>
                 <Key className="w-3.5 h-3.5 text-purple-400" />
-                <span>ارسال رمز عبور جدید به تلگرام (ID: 86502422)</span>
+                <span>ارسال رمز عبور جدید به ربات تلگرام</span>
               </>
             )}
           </button>

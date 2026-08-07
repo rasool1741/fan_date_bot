@@ -1616,43 +1616,7 @@ export const AdminPanel: React.FC<AdminPanelProps> = ({
               </p>
             </div>
 
-            {/* Recovery Email view/edit */}
-            <div className="bg-slate-950 p-4 rounded-2xl border border-purple-500/30 space-y-3">
-              <label className="text-xs text-slate-300 font-bold block flex items-center gap-2">
-                <Mail className="w-4 h-4 text-purple-400" />
-                <span>ایمیل پشتیبانی و بازیابی رمز عبور (در سورس برنامه):</span>
-              </label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="email"
-                  value={formSettings.adminRecoveryEmail || 'rasoolramazani@gmail.com'}
-                  onChange={(e) => {
-                    isFormDirty.current = true;
-                    setFormSettings({
-                      ...formSettings,
-                      adminRecoveryEmail: e.target.value,
-                    });
-                  }}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-purple-300 text-xs font-mono font-bold focus:outline-none focus:border-purple-500"
-                />
-                <button
-                  type="button"
-                  onClick={() => {
-                    soundFx.playPop();
-                    navigator.clipboard.writeText(formSettings.adminRecoveryEmail || 'rasoolramazani@gmail.com');
-                    setCopiedEmailSetting(true);
-                    setTimeout(() => setCopiedEmailSetting(false), 2000);
-                  }}
-                  className="px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-xs font-bold shrink-0 transition-colors flex items-center gap-1"
-                >
-                  {copiedEmailSetting ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{copiedEmailSetting ? 'کپی شد' : 'کپی'}</span>
-                </button>
-              </div>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                در صورت فراموشی رمز عبور توسط مدیر، در صفحه ورود پیغام پشتیبانی جهت تماس با ایمیل فوق (<code className="text-purple-300 font-mono">rasoolramazani@gmail.com</code>) به کاربر نمایش داده می‌شود.
-              </p>
-            </div>
+
           </div>
 
           <div className="flex items-center justify-between pt-2">

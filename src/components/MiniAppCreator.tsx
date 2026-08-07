@@ -5,14 +5,12 @@ import { InviteSession, AppSettings } from '../types';
 interface MiniAppCreatorProps {
   settings: AppSettings;
   onOpenAdminLogin?: () => void;
-  onPreviewInvite?: (id: string) => void;
   onBackToAdminPanel?: () => void;
 }
 
 export const MiniAppCreator: React.FC<MiniAppCreatorProps> = ({
   settings,
   onOpenAdminLogin,
-  onPreviewInvite,
   onBackToAdminPanel,
 }) => {
   const [dateType, setDateType] = useState<'fun' | 'formal'>('fun');
@@ -306,17 +304,6 @@ export const MiniAppCreator: React.FC<MiniAppCreatorProps> = ({
                 </>
               )}
             </button>
-
-            {onPreviewInvite && (
-              <button
-                type="button"
-                onClick={() => onPreviewInvite(createdInvite.id)}
-                className="w-full py-3 rounded-2xl bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-400 hover:text-slate-200 font-medium text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer"
-              >
-                <Eye className="w-4 h-4 text-slate-400" />
-                <span>پیش‌نمایش صفحه دعوت مخاطب 👁️</span>
-              </button>
-            )}
 
             <button
               type="button"
