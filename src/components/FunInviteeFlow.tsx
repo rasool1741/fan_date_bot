@@ -180,34 +180,44 @@ export const FunInviteeFlow: React.FC<FunInviteeFlowProps> = ({ invite, settings
     <div className="max-w-2xl mx-auto px-4 py-8 relative">
       {/* Toast popup when clicking a disabled fantasy option */}
       {disabledToast && (
-        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-rose-900 text-rose-100 border border-rose-400/50 px-5 py-2.5 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2 animate-bounce">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 z-50 bg-gradient-to-r from-purple-900 to-pink-900 text-purple-100 border border-purple-400/50 px-5 py-2.5 rounded-2xl shadow-2xl text-xs font-bold flex items-center gap-2 animate-bounce">
           <Sparkles className="w-4 h-4 text-amber-300" />
           <span>{disabledToast}</span>
         </div>
       )}
 
       {/* Main Card Header */}
-      <div className="bg-slate-900/90 border border-rose-500/30 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden">
-        {/* Decorative background blur glow */}
-        <div className="absolute -top-20 -left-20 w-48 h-48 bg-rose-500/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -right-20 w-48 h-48 bg-pink-500/20 rounded-full blur-3xl pointer-events-none" />
+      <div className="bg-slate-950/90 border-2 border-purple-500/40 rounded-3xl p-6 md:p-8 shadow-2xl shadow-purple-950/80 backdrop-blur-2xl relative overflow-hidden">
+        {/* Shimmering Top Accent */}
+        <div className="absolute top-0 left-0 right-0 h-2 bg-gradient-to-r from-purple-500 via-pink-500 via-amber-400 to-cyan-400 animate-pulse" />
+
+        {/* Decorative background blur glows */}
+        <div className="absolute -top-20 -left-20 w-56 h-56 bg-purple-600/25 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -right-20 w-56 h-56 bg-pink-500/25 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Floating Fantasy Emojis */}
+        <div className="absolute top-4 right-4 text-xl opacity-80 pointer-events-none animate-bounce">✨</div>
+        <div className="absolute bottom-4 left-4 text-xl opacity-80 pointer-events-none animate-pulse">🦄</div>
 
         {/* Inviter Info Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4 mb-6">
+        <div className="flex items-center justify-between border-b border-purple-900/40 pb-4 mb-6 relative z-10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-rose-500/20 border border-rose-500/40 flex items-center justify-center text-rose-400">
-              <Heart className="w-5 h-5 fill-rose-500 animate-pulse" />
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-purple-500 to-pink-500 p-0.5 shadow-lg shadow-purple-500/20">
+              <div className="w-full h-full rounded-full bg-slate-950 flex items-center justify-center text-pink-400">
+                <Sparkles className="w-5 h-5 text-amber-300 animate-pulse" />
+              </div>
             </div>
             <div>
-              <p className="text-xs text-slate-400">دعوتنامه اختصاصی از طرف:</p>
-              <h3 className="font-bold text-slate-100 text-base">
+              <p className="text-xs text-purple-300/80 font-medium">دعوتنامه جادویی از طرف:</p>
+              <h3 className="font-extrabold text-white text-base">
                 {invite.inviterName} {invite.inviteeName ? `برای ${invite.inviteeName}` : ''}
               </h3>
             </div>
           </div>
-          <span className="text-xs bg-rose-500/20 text-rose-300 border border-rose-500/30 px-3 py-1 rounded-full font-medium flex items-center gap-1">
-            <Sparkles className="w-3.5 h-3.5" />
-            دیت فان 🥳
+          <span className="text-xs bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-amber-500/20 text-purple-200 border border-purple-400/40 px-3.5 py-1.5 rounded-full font-bold flex items-center gap-1.5 shadow-md shadow-purple-500/10">
+            <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-spin" />
+            دیت فانتزی 🦄✨
           </span>
         </div>
 

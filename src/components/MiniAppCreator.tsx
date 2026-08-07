@@ -159,18 +159,18 @@ export const MiniAppCreator: React.FC<MiniAppCreatorProps> = ({
                 onClick={() => setDateType('fun')}
                 className={`p-4 rounded-2xl border text-right transition-all flex flex-col justify-between space-y-3 cursor-pointer ${
                   dateType === 'fun'
-                    ? 'bg-rose-500/15 border-rose-500/60 shadow-lg shadow-rose-500/10 text-white'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-gradient-to-br from-purple-500/25 via-pink-500/20 to-amber-500/15 border-purple-400/80 shadow-lg shadow-purple-500/20 text-white'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-purple-500/40'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl">🥳</span>
-                  {dateType === 'fun' && <Sparkle className="w-4 h-4 text-rose-400" />}
+                  <span className="text-2xl">🦄✨</span>
+                  {dateType === 'fun' && <Sparkles className="w-4 h-4 text-purple-400" />}
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-100">دیت فان و صمیمی</h3>
+                  <h3 className="font-bold text-sm text-slate-100">دیت فانتزی و صمیمی</h3>
                   <p className="text-[11px] text-slate-400 mt-1 leading-tight">
-                    با دکمه «خیر» فراری و شوخی‌های بامزه!
+                    پر از افکت‌های جادویی، دکمه فراری و بازی‌های جذاب!
                   </p>
                 </div>
               </button>
@@ -180,18 +180,18 @@ export const MiniAppCreator: React.FC<MiniAppCreatorProps> = ({
                 onClick={() => setDateType('formal')}
                 className={`p-4 rounded-2xl border text-right transition-all flex flex-col justify-between space-y-3 cursor-pointer ${
                   dateType === 'formal'
-                    ? 'bg-amber-500/15 border-amber-500/60 shadow-lg shadow-amber-500/10 text-white'
-                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-slate-700'
+                    ? 'bg-gradient-to-br from-rose-500/25 via-pink-600/20 to-red-500/15 border-rose-500/80 shadow-lg shadow-rose-500/20 text-white'
+                    : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:border-rose-500/40'
                 }`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl">👔</span>
-                  {dateType === 'formal' && <Sparkle className="w-4 h-4 text-amber-400" />}
+                  <span className="text-2xl">💖🌹</span>
+                  {dateType === 'formal' && <Heart className="w-4 h-4 text-rose-400 fill-rose-400" />}
                 </div>
                 <div>
-                  <h3 className="font-bold text-sm text-slate-100">دیت رسمی و شیک</h3>
+                  <h3 className="font-bold text-sm text-slate-100">دیت رسمی و عاشقانه</h3>
                   <p className="text-[11px] text-slate-400 mt-1 leading-tight">
-                    همراه با نظرسنجی زمان، کافه و مکان قرار!
+                    با تم عاشقانه قرمز و صورتی، شعر و نظرسنجی دیدار!
                   </p>
                 </div>
               </button>
