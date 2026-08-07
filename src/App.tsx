@@ -279,7 +279,7 @@ export default function App() {
         )}
 
         {/* Clean Standalone Card - No admin access link for invitees */}
-        <div className="w-full max-w-2xl my-auto animate-fade-in">
+        <div className="w-full max-w-2xl my-auto animate-fade-in py-6">
           {loadingInvite ? (
             <div className="text-center py-20 text-slate-400 text-sm flex items-center justify-center gap-2">
               <RefreshCw className="w-5 h-5 animate-spin text-rose-400" />
@@ -307,6 +307,11 @@ export default function App() {
             </div>
           )}
         </div>
+
+        {/* Warm & Friendly Footer */}
+        <footer className="w-full py-4 text-center text-xs text-slate-400 font-medium">
+          💕 ربات ساخت دعوت‌نامه‌های فانتزی و لحظه‌های شیرین قرار • <span className="font-mono text-rose-400 font-bold">{settings.botConfig?.botUsername ? `@${settings.botConfig.botUsername.replace(/^@/, '')}` : '@Fun_Date_bot'}</span> ✨
+        </footer>
       </div>
     );
   }
@@ -376,9 +381,9 @@ export default function App() {
         )}
       </main>
 
-      {/* Subtle Footer */}
-      <footer className="bg-slate-950 border-t border-slate-900 py-4 px-4 text-center text-xs text-slate-500 font-mono">
-        اپلیکیشن بازی‌گونه دعوت به دیت • طراحی شده با React + Express & Telegram WebApp Concept
+      {/* Warm & Friendly Footer */}
+      <footer className="bg-slate-950 border-t border-slate-900/80 py-4 px-4 text-center text-xs text-slate-400 font-medium dir-rtl">
+        💕 ربات ساخت دعوت‌نامه‌های فانتزی و لحظه‌های شیرین قرار • <span className="font-mono text-rose-400 font-bold">{settings.botConfig?.botUsername ? `@${settings.botConfig.botUsername.replace(/^@/, '')}` : '@Fun_Date_bot'}</span> ✨
       </footer>
     </div>
   );
